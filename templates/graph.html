@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Cog Graph</title>
+    <style type="text/css">
+    body {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    #cog-graph-view {
+        width: 100%;
+        height: 100vh;
+    }
+    </style>
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  </head>  
+ 
+  <body>
+    <div id="cog-graph-view"></div>
+
+    <script type="text/javascript">
+        graph_data ={{ data | tojson }};
+
+        color_map = {
+            "Person": "#ab62c0",
+            "OperatingSystem": "#72a555",
+            "Browser": "#ca5670",
+            "Endpoint": "#638ccc",
+            "b": "#c57c3c",
+        };
+    
+        var nodes = new vis.DataSet();
+        var edges = new vis.DataSet();
+        for (let i = 0; i < graph_data.relationships.length; i++) {
+            res = graph_data.relationships[i];
+            console.log(res.from.roles);
+            nodes.update({
+                id: res.from.id,
+                label: res.from.name,
+                title: res.from.label,
+                color: color_map[res.from.label],
+            });
+            nodes.update({
+                id: res.to.id,
+                label: res.to.name,
+                title: res.to.label,
+                color: color_map[res.to.label],
+            });
+            edges.update({
+                from: res.from.id,
+                to: res.to.id,
+                label: res.edge.label,
+            });
+        }
+        for (let i = 0; i < graph_data.people.length; i++) {
+            res = graph_data.people[i];
+            nodes.update({
+                id: res.id,
+                label: res.name,
+                color: color_map[res.label],
+            });
+        }
+
+        var container = document.getElementById("cog-graph-view");
+        var data = {
+            nodes: nodes,
+            edges: edges,
+        };
+        var options = {
+            nodes: {
+                font: {
+                    size: 20,
+                    color: "black"
+                },
+                color: "#46944f",
+                shape: "dot",
+                //widthConstraint: 200,
+
+            },
+            edges: {
+                font: {
+                    size: 18,
+                    color: "grey",
+                },
+                shadow: true,
+                smooth: true,
+                arrows: { to: {enabled: true}}
+            },
+            physics: {
+                barnesHut: {
+                    gravitationalConstant: -30000
+                },
+                stabilization: {
+                    iterations: 1000
+                },
+            },
+            autoResize: true,
+        };
+        var network = new vis.Network(container, data, options);
+    </script>
+  </body>
+</html>
+

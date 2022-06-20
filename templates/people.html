@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}People{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+
+{% if data.people is defined %}
+<ul>
+    {% for person in data.people %}
+    <li>{{ person.name }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% endblock %}
