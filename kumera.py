@@ -1,16 +1,17 @@
 from xml.dom import NotFoundErr
 from ariadne import QueryType, MutationType, graphql_sync, gql, make_executable_schema
-from ariadne import InterfaceType
+from ariadne import InterfaceType, ObjectType
 from ariadne.constants import PLAYGROUND_HTML
 from flask import Flask, request, jsonify, render_template, flash
 import json
 import age
 from age.gen.AgtypeParser import *
+import psycopg2.extras
 
 GRAPH_NAME = "test_graph"
 DSN = "host=localhost port=5432 dbname=postgres user=postgres password=password"
 
-ag = age.connect(graph=GRAPH_NAME, dsn=DSN)
+ag = age.connect(graph=GRAPH_NAME, dsn=DSN, cursor_factory=psycopg2.extras.DictCursor)
 ag.setGraph(GRAPH_NAME)
 
 type_defs = gql("""
@@ -35,6 +36,7 @@ type_defs = gql("""
         id: String!
         label: String!
         name: String!
+        version: String!
         major: Int!
         minor: Int!
         patch: Int
@@ -45,6 +47,7 @@ type_defs = gql("""
         id: String!
         label: String!
         name: String!
+        version: String!
         major: Int!
         minor: Int!
         patch: Int
@@ -81,10 +84,17 @@ type_defs = gql("""
         edge: Edge!
     }
 
+    type OperatingSystemUsedByPerson {
+        operatingSystem: OperatingSystem
+        persons: [Person]
+    }
+
     type Query {
-        people: [Person]!
+        persons: [Person]!
         endpoints: [Endpoint]!
         servers: [Server]!
+
+        operatingSystemsUsedByPersons: [OperatingSystemUsedByPerson]
 
         relationships: [Relationship]!
     }
@@ -95,39 +105,61 @@ query = QueryType()
 mutation = MutationType()
 interface_node = InterfaceType("Node")
 
+operating_system = ObjectType("OperatingSystem")
+browser = ObjectType("Browser")
+
+
+def agtype_to_dict(obj):
+    return {
+        "id": obj.id,
+        "label": obj.label,
+        **obj.properties,
+    }
+
 # ...and assign our resolver function to its "hello" field.
-@query.field("people")
-def resolve_people(_, info, first=10, offset=0):
+@query.field("persons")
+def resolve_persons(_, info, first=10, offset=0):
     cursor = ag.execCypher("MATCH (n:Person) RETURN n")
-    def result():
-        for row in cursor:
-            n = row[0]
-            yield { "id": n.id, "name": n["name"], "label": n.label, **n.properties }
-    return result()
+    return (
+        agtype_to_dict(row[0])
+        for row in cursor
+    )
 
 @query.field("relationships")
 def resolve_relationships(_, info):
-    cursor = ag.execCypher("MATCH p=(n)-[r]->(m) RETURN p")
-    def result():
-        for row in cursor:
-            n, r, m = row[0]
-            yield {
-                "from": {
-                    "id": n.id,
-                    "label": n.label,
-                    **n.properties,
-                },
-                "to":{
-                    "id": m.id,
-                    "label": m.label,
-                    **m.properties,
-                },
-                "edge": {
-                    "id": r.id,
-                    "label": r.label,
-                },
-            }
-    return result()
+    cursor = ag.execCypher("MATCH (n)-[r]->(m) RETURN n, r, m", cols=["n", "r", "m"])
+    return (
+        {
+            "from": agtype_to_dict(row["n"]),
+            "to": agtype_to_dict(row["m"]),
+            "edge": agtype_to_dict(row["r"]),
+        }
+        for row in cursor
+    )
+
+@query.field("operatingSystemsUsedByPersons")
+def resolve_operating_systems_used_by_persons(_, info):
+    cursor = ag.execCypher(
+        "MATCH (n:OperatingSystem)<-[r:HasVersion]-(:Endpoint)<-[:Registered]-(p:Person) RETURN n, collect(p)",
+        cols=["n", "p"]
+    )
+    return (
+        { 
+            "operatingSystem": agtype_to_dict(row["n"]),
+            "persons": ( agtype_to_dict(p) for p in row["p"] ),
+        } 
+        for row in cursor
+    )
+
+@browser.field("version")
+@operating_system.field("version")
+def resolve_version(obj, info):
+    major = obj.get("major", 0)
+    minor = obj.get("minor", 0)
+    patch = obj.get("patch", 0)
+    build = obj.get("build", '')
+    return "{}.{}.{}.{}".format(major, minor, patch, build)
+
 
 @interface_node.type_resolver
 def resolve_interface_node(obj, *_):
@@ -137,7 +169,7 @@ def resolve_interface_node(obj, *_):
         return None
 
 
-schema = make_executable_schema(type_defs, [query, interface_node])
+schema = make_executable_schema(type_defs, query, interface_node, browser, operating_system)
 
 app = Flask(__name__, static_folder='public', static_url_path='')
 app.config.from_mapping(
@@ -174,7 +206,7 @@ def graphql_server():
 @app.route('/')
 def index():
 
-    data = dict(query="{ people { name } }")
+    data = dict(query="{ persons { name } }")
 
     success, result = graphql_sync(schema, data, context_value=request, debug=app.debug)
     
@@ -182,7 +214,7 @@ def index():
         for error in result.get("errors", []):
             flash(error["message"])
 
-    return render_template('people.html', data=result.get("data",{}))
+    return render_template('persons.html', data=result.get("data",{}))
 
 @app.route('/view')
 def view():
@@ -195,7 +227,7 @@ def view():
                 ... nodeFields
             } edge { id label }
         }
-        people {
+        persons {
             ... nodeFields
         }
     }
