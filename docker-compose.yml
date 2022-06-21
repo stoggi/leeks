@@ -17,6 +17,21 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
 
+  memgraph:
+    image: memgraph/memgraph-platform
+    ports:
+      - "7687:7687"
+      - "3000:3000"
+      - "7444:7444"
+    volumes:
+      - mg_lib:/var/lib/memgraph
+      - mg_log:/var/log/memgraph
+      - mg_etc:/etc/memgraph
+    entrypoint: ["/usr/bin/supervisord"]
+
 volumes:
   db-data:
     driver: local
+  mg_lib:
+  mg_log:
+  mg_etc:

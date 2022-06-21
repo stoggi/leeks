@@ -9,10 +9,10 @@ ag = age.connect(graph=GRAPH_NAME, dsn=DSN, cursor_factory=psycopg2.extras.DictC
 ag.setGraph(GRAPH_NAME)
 
 #cursor = ag.execCypher("MATCH (n)-[:status]->(m:Person {name: 'cool_person'})  RETURN n")
-cursor = ag.execCypher("MATCH p=(n)-[r]-(m) RETURN p")
+cursor = ag.execCypher("MATCH (n)-[r]-(m) RETURN n, r, m")
 for row in cursor:
-    n, r, m = row[0]
-    #print(n, r, m)
+    n, r, m = row
+    print(n, r, m)
 
 
 
