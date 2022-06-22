@@ -1,11 +1,10 @@
+from re import M
 from ariadne import graphql_sync, gql, make_executable_schema
 from ariadne import InterfaceType, ObjectType, QueryType, MutationType
 from ariadne.constants import PLAYGROUND_HTML
 from flask import Flask, request, jsonify, render_template, flash, g
 
 import mgclient
-
-conn = mgclient.connect(host='127.0.0.1', port=7687)
 
 type_defs = gql("""
     type SoftwareVersion {
@@ -82,6 +81,24 @@ type_defs = gql("""
         persons: [Person]
     }
 
+    type GrafanaNodeView {
+        nodes: [GrafanaNode]
+        edges: [GrafanaEdge]
+    }
+
+    type GrafanaNode {
+        id: String!
+        title: String
+        subtitle: String
+    }
+
+    type GrafanaEdge {
+        id: String!
+        source: String!
+        target: String!
+        mainstat: String
+    }
+
     type Query {
         persons: [Person]!
         endpoints: [Endpoint]!
@@ -90,6 +107,9 @@ type_defs = gql("""
         operatingSystemsUsedByPersons: [OperatingSystemUsedByPerson]
 
         relationships: [Relationship]!
+
+        grafana: GrafanaNodeView!
+
     }
 """)
 
@@ -159,6 +179,27 @@ def resolve_operating_systems_used_by_persons(context, info):
         } 
         for n, collect_p in iter(c.fetchone, None)
     )
+
+@query.field("grafana")
+def resolve_grafana(_, info):
+    c = g.conn.cursor()
+    c.execute("MATCH (n)-[r]->(m) WHERE NOT type(r) = 'Follows' RETURN n, r, m")
+
+    nodes = {}
+    edges = []
+    for n, r, m in  iter(c.fetchone, None):
+        nodes[n.id] = {"id": n.id, "title": ",".join(n.labels), "subtitle": n.properties["name"]}
+        nodes[m.id] = {"id": m.id, "title": ",".join(m.labels), "subtitle": m.properties["name"]}
+        edges.append({
+            "id": r.id,
+            "source": n.id,
+            "target": m.id,
+            "mainstat": r.type,
+        })
+    return  {
+        "nodes": nodes.values(),
+        "edges": edges
+    }
 
 @browser.field("version")
 @operating_system.field("version")
@@ -259,4 +300,4 @@ def disconnect_mgclient(exception):
             g.conn.close()
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0")
