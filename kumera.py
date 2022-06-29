@@ -5,6 +5,7 @@ from ariadne.constants import PLAYGROUND_HTML
 from flask import Flask, request, jsonify, render_template, flash, g
 
 import mgclient
+from neo4j import GraphDatabase
 
 type_defs = gql("""
     type SoftwareVersion {
@@ -133,43 +134,40 @@ def node_to_dict(obj):
     return {
         "id": obj.id,
         "label": ",".join(obj.labels),
-        **obj.properties,
+        **obj,
     }
 
 def edge_to_dict(obj):
     return {
         "id": obj.id,
         "label": obj.type,
-        **obj.properties,
+        **obj,
     }
 
 # ...and assign our resolver function to its "hello" field.
 @query.field("persons")
 def resolve_persons(context, info, first=10, offset=0):
-    c = g.conn.cursor()
-    c.execute("MATCH (n:Person) RETURN n")
+    result = g.session.run("MATCH (n:Person) RETURN n")
     return (
-        node_to_dict(row[0])
-        for row in iter(c.fetchone, None)
+        node_to_dict(row["n"])
+        for row in result
     )
 
 @query.field("relationships")
 def resolve_relationships(context, info):
-    c = g.conn.cursor()
-    c.execute("MATCH (n)-[r]->(m) RETURN n, r, m")
+    result = g.session.run("MATCH (n)-[r]->(m) RETURN n, r, m")
     return (
         {
             "from": node_to_dict(n),
             "to": node_to_dict(m),
             "edge": edge_to_dict(r),
         }
-        for n, r, m in iter(c.fetchone, None)
+        for n, r, m in result
     )
 
 @query.field("operatingSystemsUsedByPersons")
 def resolve_operating_systems_used_by_persons(context, info):
-    c = g.conn.cursor()
-    c.execute(
+    result = g.session.run(
         "MATCH (n:OperatingSystem)<-[r:HasVersion]-(:Endpoint)<-[:Registered]-(p:Person) RETURN n, collect(p)"
     )
     return (
@@ -177,17 +175,16 @@ def resolve_operating_systems_used_by_persons(context, info):
             "operatingSystem": node_to_dict(n),
             "persons": ( node_to_dict(p) for p in collect_p ),
         } 
-        for n, collect_p in iter(c.fetchone, None)
+        for n, collect_p in result
     )
 
 @query.field("grafana")
 def resolve_grafana(_, info):
-    c = g.conn.cursor()
-    c.execute("MATCH (n)-[r]->(m) WHERE NOT type(r) = 'Follows' RETURN n, r, m")
+    result = g.session.run("MATCH (n)-[r]->(m) WHERE NOT type(r) = 'Follows' RETURN n, r, m")
 
     nodes = {}
     edges = []
-    for n, r, m in  iter(c.fetchone, None):
+    for n, r, m in result:
         nodes[n.id] = {"id": n.id, "title": ",".join(n.labels), "subtitle": n.properties["name"]}
         nodes[m.id] = {"id": m.id, "title": ",".join(m.labels), "subtitle": m.properties["name"]}
         edges.append({
@@ -258,6 +255,10 @@ def index():
 
     return render_template('persons.html', data=result.get("data",{}))
 
+@app.route('/slides')
+def slides():
+    return render_template('slides.html')
+
 @app.route('/view')
 def view():
     data = dict(query="""
@@ -288,16 +289,17 @@ def view():
 
     return render_template('graph.html', data=result.get("data",{}))
 
+driver = GraphDatabase.driver("neo4j://localhost:7687", auth=("neo4j", "password"))
+
 @app.before_request
 def connect_mgclient():
     if "c" not in g:
-        g.conn = mgclient.connect(host='127.0.0.1', port=7687)
+        g.session = driver.session()
 
 @app.teardown_appcontext
 def disconnect_mgclient(exception):
     if "c" in g:
-        if g.conn.status != mgclient.CONN_STATUS_CLOSED:
-            g.conn.close()
+        g.session.close()
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")

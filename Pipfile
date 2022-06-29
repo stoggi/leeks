@@ -9,6 +9,7 @@ gunicorn = "*"
 ariadne = "*"
 typing-extensions = "*"
 pymgclient = "*"
+neo4j = "*"
 
 [dev-packages]
 
