@@ -1,0 +1,17 @@
+
+type Endpoint implements Node {
+    id: String!
+    label: String!
+    name: String!
+}
+
+input CreateEndpoint {
+    name: String!
+}
+
+input UpdateEndpoint {
+    id: String!
+    name: String
+}
+
+union EndpointResult = Endpoint | Error

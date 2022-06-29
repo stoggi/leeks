@@ -1,0 +1,24 @@
+type Browser implements Node {
+    id: String!
+    label: String!
+    name: String!
+    version: String!
+    major: Int!
+    minor: Int!
+    patch: Int
+}
+input CreateBrowser {
+    name: String!
+    major: Int!
+    minor: Int!
+    patch: Int
+}
+input UpdateBrowser {
+    id: String!
+    name: String
+    major: Int
+    minor: Int
+    patch: Int
+}
+
+union BrowserResult = Browser | Error

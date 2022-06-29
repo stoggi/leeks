@@ -1,0 +1,26 @@
+type Service implements Node {
+    id: String!
+    label: String!
+    name: String!
+    website: String
+    phone: String
+    email: String
+    hours: String
+}
+input CreateService {
+    name: String!
+    website: String
+    phone: String
+    email: String
+    hours: String
+}
+input UpdateService {
+    id: String!
+    name: String
+    website: String
+    phone: String
+    email: String
+    hours: String
+}
+
+union ServiceResult = Service | Error

@@ -1,0 +1,25 @@
+enum DataClassification {
+    PUBLIC
+    PRIVATE
+    INTERNAL
+    CONFIDENTIAL
+    RESTRICTED
+}
+
+type Asset implements Node {
+    id: String!
+    label: String!
+    name: String!
+    classification: DataClassification
+}
+input CreateAsset {
+    name: String!
+    classification: DataClassification
+}
+input UpdateAsset {
+    id: String!
+    name: String!
+    classification: DataClassification
+}
+
+union AssetResult = Asset | Error

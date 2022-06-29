@@ -1,0 +1,17 @@
+type Impact implements Node {
+    id: String!
+    label: String!
+    name: String!
+    value: Int
+}
+input CreateImpact {
+    name: String!
+    value: Int
+}
+input UpdateImpact {
+    id: String!
+    name: String
+    value: Int
+}
+
+union ImpactResult = Impact | Error

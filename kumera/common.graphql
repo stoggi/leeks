@@ -1,0 +1,64 @@
+
+
+interface Node {
+    id: String!
+    label: String!
+    name: String!
+}
+
+type Edge {
+    id: String!
+    label: String!
+}
+
+type Relationship {
+    from: Node!
+    to: Node!
+    edge: Edge!
+}
+
+type OperatingSystemUsedByPerson {
+    operatingSystem: OperatingSystem
+    persons: [Person]
+}
+
+type Error {
+    message: String!
+}
+
+type Query {
+    asset(id: String, name: String): [Asset]!
+    browser: [Browser]!
+    endpoint: [Endpoint]!
+    impact: [Impact]!
+    operatingSystem: [OperatingSystem]!
+    person: [Person]!
+    service: [Service]!
+
+    operatingSystemsUsedByPersons: [OperatingSystemUsedByPerson]
+    relationships: [Relationship]!
+    grafana: GrafanaNodeView!
+}
+
+type Mutation {
+    createService(service: CreateService!): ServiceResult!
+    updateService(service: UpdateService!): ServiceResult!
+
+    createEndpoint(endpoint: CreateEndpoint!): EndpointResult!
+    updateEndpoint(endpoint: UpdateEndpoint!): EndpointResult!
+
+    createOperatingSystem(operatingSystem: CreateOperatingSystem!): OperatingSystemResult!
+    updateOperatingSystem(operatingSystem: UpdateOperatingSystem!): OperatingSystemResult!
+
+    createBrowser(browser: CreateBrowser!): BrowserResult!
+    updateBrowser(browser: UpdateBrowser!): BrowserResult!
+
+    createPerson(person: CreatePerson!): PersonResult!
+    updatePerson(person: UpdatePerson!): PersonResult!
+
+    createAsset(asset: CreateAsset!): AssetResult!
+    updateAsset(asset: UpdateAsset!): AssetResult!
+
+    createImpact(impact: CreateImpact!): ImpactResult!
+    updateImpact(impact: UpdateImpact!): ImpactResult!
+}
