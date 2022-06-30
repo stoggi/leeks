@@ -5,9 +5,8 @@ enum Role {
     USER
 }
 
-type Person implements Node {
+type Person {
     id: String!
-    label: String!
     name: String!
     email: String!
     phone: String
@@ -27,4 +26,7 @@ input UpdatePerson {
     roles: [Role]
 }
 
-union PersonResult = Person | Error
+type PersonResult {
+    person: Person
+    error: String
+}

@@ -20,36 +20,19 @@ def resolve_version(obj, info):
 
 @interface_node.type_resolver
 def resolve_interface_node(obj, *_):
-    if obj["label"] in [
-        "Asset",
-        "Browser",
-        "Endpoint",
-        "Impact",
-        "OperatingSystem",
-        "Person",
-        "Service",
-    ]:
-        return obj["label"]
-    else:
-        return None
+    return obj.get("label", None)
 
-def resolve_error_type(obj, *_):
-    if "message" in obj.keys():
-        return "Error"
-    else:
-        return obj["label"]
 
 @query.field("relationships")
 def resolve_relationships(context, info):
-    result = g.session.run("MATCH (n)-[r]->(m) RETURN n, r, m")
-    return (
-        {
-            "from": node_to_dict(n),
-            "to": node_to_dict(m),
-            "edge": edge_to_dict(r),
+    result = g.session.run("""
+        MATCH (n)-[r]->(m) RETURN {
+            from: { id: ID(n), label: labels(n)[0], name: n.name },
+            edge: { id: ID(r), label: type(r) },
+            to: { id: ID(m), label: labels(m)[0], name: m.name }
         }
-        for n, r, m in result
-    )
+    """)
+    return result.value()
 
 
 resolvers = [
@@ -57,11 +40,4 @@ resolvers = [
     operating_system,
     interface_node,
     browser,
-    UnionType("AssetResult", resolve_error_type),
-    UnionType("BrowserResult", resolve_error_type),
-    UnionType("EndpointResult", resolve_error_type),
-    UnionType("ImpactResult", resolve_error_type),
-    UnionType("OperatingSystemResult", resolve_error_type),
-    UnionType("PersonResult", resolve_error_type),
-    UnionType("ServiceResult", resolve_error_type),
 ]

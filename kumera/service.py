@@ -11,16 +11,26 @@ resolvers = [query, mutation]
 @query.field('service')
 def resolve_service(context, info):
     result = g.session.run("MATCH (n:Service) RETURN n")
-    return ( node_to_dict(n) for n, in result )
+    return result.value()
 
 @mutation.field('createService')
-def resolve_create_service(context, info, service):
+def resolve_create_service(context, info, params):
     result = g.session.run(
-        "CREATE (n:Service { name: $name, website: $website, phone: $phone, email: $email, hours: $hours }) RETURN n",
-        name=service.get("name", None),
-        website=service.get("website", None),
-        phone=service.get("phone", None),
-        email=service.get("email", None),
-        hours=service.get("hours", None),
-    )
-    return node_to_dict(result.single()["n"])
+        "CREATE (n:Service { id: randomUUID() }) SET n += $params RETURN n",
+        params=params,
+    ).single()
+    if result:
+        return { "service": result.value() }
+    else:
+        return { "error": "unable to create." }
+
+@mutation.field('updateService')
+def resolve_update_service(context, info, params):
+    result = g.session.run(
+        "MATCH (n:Service { id: $params.id }) SET n += $params RETURN n",
+        params=params,
+    ).single()
+    if result:
+        return { "service": result.value() }
+    else:
+        return { "error": "not found." }

@@ -1,7 +1,6 @@
 
-type Endpoint implements Node {
+type Endpoint {
     id: String!
-    label: String!
     name: String!
 }
 
@@ -14,4 +13,7 @@ input UpdateEndpoint {
     name: String
 }
 
-union EndpointResult = Endpoint | Error
+type EndpointResult {
+    endpoint: Endpoint
+    error: String
+}

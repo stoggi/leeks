@@ -1,6 +1,5 @@
-type OperatingSystem implements Node {
+type OperatingSystem {
     id: String!
-    label: String!
     name: String!
     version: String!
     major: Int!
@@ -24,4 +23,7 @@ input UpdateOperatingSystem {
     build: String
 }
 
-union OperatingSystemResult = OperatingSystem | Error
+type OperatingSystemResult {
+    operatingSystem: OperatingSystem
+    error: String
+}

@@ -1,8 +1,10 @@
-import os 
+import os
+import json
 from ariadne import graphql_sync, gql, make_executable_schema, load_schema_from_path
 from ariadne import InterfaceType, ObjectType, QueryType, MutationType
 from ariadne.constants import PLAYGROUND_HTML
-from flask import Flask, request, jsonify, render_template, flash, g
+from flask import Flask, request, jsonify, render_template, flash, url_for, g
+from authlib.integrations.flask_client import OAuth
 
 from kumera import resolvers, type_defs
 from kumera.utils import node_to_dict, edge_to_dict
@@ -15,6 +17,19 @@ app = Flask(__name__, static_folder='public', static_url_path='')
 app.config.from_mapping(
     SECRET_KEY="dev",
 )
+app.config.from_file("./config.json", load=json.load)
+
+oauth = OAuth(app)
+github = oauth.register(
+    name='github',
+    access_token_url='https://github.com/login/oauth/access_token',
+    access_token_params=None,
+    authorize_url='https://github.com/login/oauth/authorize',
+    authorize_params=None,
+    api_base_url='https://api.github.com/',
+    client_kwargs={'scope': 'user:email'},
+)
+
 
 @app.route("/graphql", methods=["GET"])
 def graphql_playground():
@@ -35,6 +50,21 @@ def graphql_server():
     status_code = 200 if success else 400
     return jsonify(result), status_code
 
+
+
+@app.route('/login')
+def login():
+    redirect_uri = url_for('authorize', _external=True)
+    return github.authorize_redirect("http://localhost:5000/authorize")
+
+@app.route('/authorize')
+def authorize():
+    token = github.authorize_access_token()
+    # you can save the token into database
+    resp = github.get('/user/emails', token=token)
+    resp.raise_for_status()
+    profile = resp.json()
+    return jsonify(profile)
 
 @app.route('/')
 def index():
@@ -57,21 +87,10 @@ def view():
     data = dict(query="""
     query relationships {
         relationships {
-            from {
-                ... nodeFields
-            } to { 
-                ... nodeFields
-            } edge { id label }
+            from { id label name }
+            to { id label name }
+            edge { id label }
         }
-        person {
-            ... nodeFields
-        }
-    }
-
-    fragment nodeFields on Node {
-        id
-        label
-        name
     }
     """)
     

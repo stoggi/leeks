@@ -1,6 +1,5 @@
-type Impact implements Node {
+type Impact {
     id: String!
-    label: String!
     name: String!
     value: Int
 }
@@ -14,4 +13,7 @@ input UpdateImpact {
     value: Int
 }
 
-union ImpactResult = Impact | Error
+type ImpactResult {
+    impact: Impact
+    error: String
+}

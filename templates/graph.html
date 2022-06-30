@@ -55,14 +55,14 @@
                 label: res.edge.label,
             });
         }
-        for (let i = 0; i < graph_data.person.length; i++) {
-            res = graph_data.person[i];
-            nodes.update({
-                id: res.id,
-                label: res.name,
-                color: color_map[res.label],
-            });
-        }
+        // for (let i = 0; i < graph_data.person.length; i++) {
+        //     res = graph_data.person[i];
+        //     nodes.update({
+        //         id: res.id,
+        //         label: res.name,
+        //         color: color_map[res.label],
+        //     });
+        // }
 
         var container = document.getElementById("cog-graph-view");
         var data = {
