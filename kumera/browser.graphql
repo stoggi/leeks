@@ -2,22 +2,14 @@ type Browser {
     id: String!
     name: String!
     version: String!
-    major: Int!
-    minor: Int!
-    patch: Int
 }
 input CreateBrowser {
     name: String!
-    major: Int!
-    minor: Int!
-    patch: Int
+    version: String!
 }
 input UpdateBrowser {
     id: String!
     name: String
-    major: Int
-    minor: Int
-    patch: Int
 }
 
 type BrowserResult {

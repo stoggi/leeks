@@ -1,6 +1,6 @@
 
 
-interface Node {
+type Node {
     id: String!
     label: String!
     name: String!
@@ -36,6 +36,18 @@ type Query {
     grafana: GrafanaNodeView!
 }
 
+input RegisterEndpoint {
+    person: CreatePerson!
+    operatingSystem: CreateOperatingSystem!
+    endpoint: CreateEndpoint!
+}
+
+type RegisterEndpointResult {
+    operatingSystem: OperatingSystem
+    endpoint: Endpoint
+    person: Person
+}
+
 type Mutation {
     createService(params: CreateService!): ServiceResult!
     updateService(params: UpdateService!): ServiceResult!
@@ -57,4 +69,6 @@ type Mutation {
 
     createImpact(params: CreateImpact!): ImpactResult!
     updateImpact(params: UpdateImpact!): ImpactResult!
+
+    registerEndpoint(params: RegisterEndpoint!): RegisterEndpointResult!
 }
