@@ -8,7 +8,7 @@ resolvers = [query, mutation]
 
 @query.field("grafana")
 def resolve_grafana(_, info):
-    result = g.session.run("MATCH (n)-[r]->(m) WHERE NOT type(r) = 'Follows' RETURN n, r, m")
+    result = g.session.run("MATCH (n)-[r]->(m) WHERE (n:Person) or (n:Team) or (n:Service) RETURN n, r, m LIMIT 20")
 
     nodes = {}
     edges = []

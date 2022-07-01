@@ -1,3 +1,10 @@
+
+
+
+cat data.cypherl | docker compose exec neo4j cypher-shell
+
+
+
 mutation {
   person: createPerson(params: {name:"Jeremy", email:"jeremy@email.com"}) { person { id } }
   asset: createAsset(params: {name:"Database"}) { asset { id } }

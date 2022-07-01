@@ -499,7 +499,7 @@ CREATE (EmployeeLaptops)-[:lost_confidentiality]->(UnhappyEmployees)
 CREATE (EmployeeLaptops)-[:lost_confidentiality]->(LoseReputation)
 CREATE (EmployeeLaptops)-[:lost_confidentiality]->(LoseMoney)
 CREATE (EmployeeLaptops)-[:lost_availability]->(LoseMoney)
-CREATE (EmployeeLaptops)-[:lost_integrity]->(LostCompany)
+CREATE (EmployeeLaptops)-[:lost_integrity]->(LoseCompany)
 
 
 CREATE (InternalMessages)-[:lost_confidentiality]->(UnhappyEmployees)
@@ -568,19 +568,19 @@ CREATE (SecurityLogs)-[:lost_availability]->(RegulatoryFines)
 CREATE (SecurityLogs)-[:lost_integrity]->(LoseReputation)
 CREATE (SecurityLogs)-[:lost_integrity]->(RegulatoryFines)
 
-;
-CREATE INDEX PersonIndex FOR (n:Person) ON (n.name);
-CREATE INDEX ServiceIndex FOR (n:Service) ON (n.name);
-CREATE INDEX ImpactIndex FOR (n:Impact) ON (n.name);
-CREATE INDEX AssetIndex FOR (n:Asset) ON (n.name);
-CREATE INDEX TeamIndex FOR (n:Team) ON (n.name);
+// ;
+// CREATE INDEX PersonIndex FOR (n:Person) ON (n.name);
+// CREATE INDEX ServiceIndex FOR (n:Service) ON (n.name);
+// CREATE INDEX ImpactIndex FOR (n:Impact) ON (n.name);
+// CREATE INDEX AssetIndex FOR (n:Asset) ON (n.name);
+// CREATE INDEX TeamIndex FOR (n:Team) ON (n.name);
 
-CREATE CONSTRAINT FOR (n:Person) REQUIRE n.name IS UNIQUE;
-CREATE CONSTRAINT FOR (n:Person) REQUIRE n.email IS UNIQUE;
-CREATE CONSTRAINT FOR (n:Service) REQUIRE n.name IS UNIQUE;
-CREATE CONSTRAINT FOR (n:Impact) REQUIRE n.name IS UNIQUE;
-CREATE CONSTRAINT FOR (n:Asset) REQUIRE n.name IS UNIQUE;
-CREATE CONSTRAINT FOR (n:Team) REQUIRE n.name IS UNIQUE;
+// CREATE CONSTRAINT FOR (n:Person) REQUIRE n.name IS UNIQUE;
+// CREATE CONSTRAINT FOR (n:Person) REQUIRE n.email IS UNIQUE;
+// CREATE CONSTRAINT FOR (n:Service) REQUIRE n.name IS UNIQUE;
+// CREATE CONSTRAINT FOR (n:Impact) REQUIRE n.name IS UNIQUE;
+// CREATE CONSTRAINT FOR (n:Asset) REQUIRE n.name IS UNIQUE;
+// CREATE CONSTRAINT FOR (n:Team) REQUIRE n.name IS UNIQUE;
 
 
 // CREATE (Customer)-[:can_access]->()
