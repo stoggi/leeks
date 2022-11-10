@@ -21,7 +21,7 @@ services:
     image: memgraph/memgraph-platform
     ports:
       - "7687:7687"
-      - "3000:3000"
+      - "3001:3000"
       - "7444:7444"
     volumes:
       - mg_lib:/var/lib/memgraph
@@ -29,9 +29,20 @@ services:
       - mg_etc:/etc/memgraph
     entrypoint: ["/usr/bin/supervisord"]
 
+  grafana:
+    image: grafana/grafana-oss
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    ports:
+      - 3000:3000
+    environment:
+      - GF_INSTALL_PLUGINS=fifemon-graphql-datasource
+
+
 volumes:
   db-data:
     driver: local
   mg_lib:
   mg_log:
   mg_etc:
+  grafana-storage:
