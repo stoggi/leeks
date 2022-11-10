@@ -9,23 +9,7 @@ from kumera.utils import node_to_dict, edge_to_dict
 
 from neo4j import GraphDatabase
 
-# Create type instance for Query type defined in our schema.
-query = QueryType()
-mutation = MutationType()
-
-@query.field("relationships")
-def resolve_relationships(context, info):
-    result = g.session.run("MATCH (n)-[r]->(m) RETURN n, r, m")
-    return (
-        {
-            "from": node_to_dict(n),
-            "to": node_to_dict(m),
-            "edge": edge_to_dict(r),
-        }
-        for n, r, m in result
-    )
-
-schema = make_executable_schema(type_defs, query, *resolvers)
+schema = make_executable_schema(type_defs, *resolvers)
 
 app = Flask(__name__, static_folder='public', static_url_path='')
 app.config.from_mapping(

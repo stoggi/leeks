@@ -1,8 +1,12 @@
-from ariadne import InterfaceType, ObjectType, UnionType
+from ariadne import InterfaceType, ObjectType, UnionType, QueryType
+from flask import g
+
+from .utils import node_to_dict, edge_to_dict
 
 interface_node = InterfaceType("Node")
 operating_system = ObjectType("OperatingSystem")
 browser = ObjectType("Browser")
+query = QueryType()
 
 @browser.field("version")
 @operating_system.field("version")
@@ -35,7 +39,21 @@ def resolve_error_type(obj, *_):
     else:
         return obj["label"]
 
+@query.field("relationships")
+def resolve_relationships(context, info):
+    result = g.session.run("MATCH (n)-[r]->(m) RETURN n, r, m")
+    return (
+        {
+            "from": node_to_dict(n),
+            "to": node_to_dict(m),
+            "edge": edge_to_dict(r),
+        }
+        for n, r, m in result
+    )
+
+
 resolvers = [
+    query,
     operating_system,
     interface_node,
     browser,
