@@ -1,18 +1,11 @@
-from xml.dom import NotFoundErr
-from ariadne import QueryType, MutationType, graphql_sync, gql, make_executable_schema
-from ariadne import InterfaceType, ObjectType
+from ariadne import graphql_sync, gql, make_executable_schema
+from ariadne import InterfaceType, ObjectType, QueryType, MutationType
 from ariadne.constants import PLAYGROUND_HTML
-from flask import Flask, request, jsonify, render_template, flash
-import json
-import age
-from age.gen.AgtypeParser import *
-import psycopg2.extras
+from flask import Flask, request, jsonify, render_template, flash, g
 
-GRAPH_NAME = "test_graph"
-DSN = "host=localhost port=5432 dbname=postgres user=postgres password=password"
+import mgclient
 
-ag = age.connect(graph=GRAPH_NAME, dsn=DSN, cursor_factory=psycopg2.extras.DictCursor)
-ag.setGraph(GRAPH_NAME)
+conn = mgclient.connect(host='127.0.0.1', port=7687)
 
 type_defs = gql("""
     type SoftwareVersion {
@@ -116,39 +109,55 @@ def agtype_to_dict(obj):
         **obj.properties,
     }
 
+def node_to_dict(obj):
+    return {
+        "id": obj.id,
+        "label": ",".join(obj.labels),
+        **obj.properties,
+    }
+
+def edge_to_dict(obj):
+    return {
+        "id": obj.id,
+        "label": obj.type,
+        **obj.properties,
+    }
+
 # ...and assign our resolver function to its "hello" field.
 @query.field("persons")
-def resolve_persons(_, info, first=10, offset=0):
-    cursor = ag.execCypher("MATCH (n:Person) RETURN n")
+def resolve_persons(context, info, first=10, offset=0):
+    c = g.conn.cursor()
+    c.execute("MATCH (n:Person) RETURN n")
     return (
-        agtype_to_dict(row[0])
-        for row in cursor
+        node_to_dict(row[0])
+        for row in iter(c.fetchone, None)
     )
 
 @query.field("relationships")
-def resolve_relationships(_, info):
-    cursor = ag.execCypher("MATCH (n)-[r]->(m) RETURN n, r, m", cols=["n", "r", "m"])
+def resolve_relationships(context, info):
+    c = g.conn.cursor()
+    c.execute("MATCH (n)-[r]->(m) RETURN n, r, m")
     return (
         {
-            "from": agtype_to_dict(row["n"]),
-            "to": agtype_to_dict(row["m"]),
-            "edge": agtype_to_dict(row["r"]),
+            "from": node_to_dict(n),
+            "to": node_to_dict(m),
+            "edge": edge_to_dict(r),
         }
-        for row in cursor
+        for n, r, m in iter(c.fetchone, None)
     )
 
 @query.field("operatingSystemsUsedByPersons")
-def resolve_operating_systems_used_by_persons(_, info):
-    cursor = ag.execCypher(
-        "MATCH (n:OperatingSystem)<-[r:HasVersion]-(:Endpoint)<-[:Registered]-(p:Person) RETURN n, collect(p)",
-        cols=["n", "p"]
+def resolve_operating_systems_used_by_persons(context, info):
+    c = g.conn.cursor()
+    c.execute(
+        "MATCH (n:OperatingSystem)<-[r:HasVersion]-(:Endpoint)<-[:Registered]-(p:Person) RETURN n, collect(p)"
     )
     return (
         { 
-            "operatingSystem": agtype_to_dict(row["n"]),
-            "persons": ( agtype_to_dict(p) for p in row["p"] ),
+            "operatingSystem": node_to_dict(n),
+            "persons": ( node_to_dict(p) for p in collect_p ),
         } 
-        for row in cursor
+        for n, collect_p in iter(c.fetchone, None)
     )
 
 @browser.field("version")
@@ -178,20 +187,13 @@ app.config.from_mapping(
 
 @app.route("/graphql", methods=["GET"])
 def graphql_playground():
-    # On GET request serve GraphQL Playground
-    # You don't need to provide Playground if you don't want to
-    # but keep on mind this will not prohibit clients from
-    # exploring your API using desktop GraphQL Playground app.
     return PLAYGROUND_HTML, 200
 
 
 @app.route("/graphql", methods=["POST"])
 def graphql_server():
-    # GraphQL queries are always sent as POST
     data = request.get_json()
 
-    # Note: Passing the request to the context is optional.
-    # In Flask, the current request is always accessible as flask.request
     success, result = graphql_sync(
         schema,
         data,
@@ -205,7 +207,6 @@ def graphql_server():
 
 @app.route('/')
 def index():
-
     data = dict(query="{ persons { name } }")
 
     success, result = graphql_sync(schema, data, context_value=request, debug=app.debug)
@@ -245,6 +246,17 @@ def view():
             flash(error["message"])
 
     return render_template('graph.html', data=result.get("data",{}))
+
+@app.before_request
+def connect_mgclient():
+    if "c" not in g:
+        g.conn = mgclient.connect(host='127.0.0.1', port=7687)
+
+@app.teardown_appcontext
+def disconnect_mgclient(exception):
+    if "c" in g:
+        if g.conn.status != mgclient.CONN_STATUS_CLOSED:
+            g.conn.close()
 
 if __name__ == "__main__":
     app.run(debug=True)

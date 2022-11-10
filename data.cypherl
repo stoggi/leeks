@@ -1,0 +1,53 @@
+MATCH (n) DETACH DELETE n;
+
+CREATE (n:Person {name: 'alice', roles: ['DEVELOPER']});
+CREATE (n:Person {name: 'bob'});
+CREATE (n:Person {name: 'charlie'});
+CREATE (n:Person {name: 'dani'});
+CREATE (n:Person {name: 'emily'});
+CREATE (n:Person {name: 'fred'});
+CREATE (n:Person {name: 'greg'});
+CREATE (n:Person {name: 'bobby'});
+CREATE (n:OperatingSystem {name:'Windows', major:10, minor:2, build:'9943'});
+CREATE (n:OperatingSystem {name:'Windows', major:11, minor:1, build:'1234'});
+CREATE (n:OperatingSystem {name:'MacOS', major:14, minor:1, build:'21F79', kernel:'21.5.0'});
+CREATE (n:Browser {name:'Firefox', major:101, minor: 0, patch: 1});
+CREATE (n:Browser {name:'Chrome', major:99, minor: 0, patch: 1});
+MATCH (n:Person {name: 'alice'}),(m:Person {name: 'bob'}) CREATE (n)-[:Follows]->(m);
+MATCH (n:Person {name: 'bob'}),(m:Person {name: 'fred'}) CREATE (n)-[:Follows]->(m);
+MATCH (n:Person {name: 'charlie'}),(m:Person {name: 'bob'}) CREATE (n)-[:Follows]->(m);
+MATCH (n:Person {name: 'charlie'}),(m:Person {name: 'dani'}) CREATE (n)-[:Follows]->(m);
+MATCH (n:Person {name: 'dani'}),(m:Person {name: 'bob'}) CREATE (n)-[:Follows]->(m);
+MATCH (n:Person {name: 'dani'}),(m:Person {name: 'greg'}) CREATE (n)-[:Follows]->(m);
+MATCH (n:Person {name: 'emily'}),(m:Person {name: 'fred'}) CREATE (n)-[:Follows]->(m);
+MATCH (n:Person {name: 'fred'}),(m:Person {name: 'greg'}) CREATE (n)-[:Follows]->(m);
+
+MATCH (n:Person {name: 'alice'})
+MERGE (n)-[r:Registered { timestamp: timestamp() }]->(m:Endpoint {name: '1234'})
+MERGE (o:OperatingSystem {name:'Windows', major:10, minor:2, build:'9943'})
+MERGE (b:Browser {name:'Firefox', major:101, minor: 0, patch: 1})
+CREATE (m)-[:HasVersion { timestamp: timestamp() }]->(o)
+CREATE (m)-[:HasVersion { timestamp: timestamp() }]->(b);
+
+
+MATCH (n:Person {name: 'bob'})
+MERGE (n)-[r:Registered { timestamp: timestamp() }]->(m:Endpoint {name: '2344'})
+MERGE (o:OperatingSystem {name:'Windows', major:10, minor:2, build:'9943'})
+MERGE (b:Browser {name:'Chrome', major:99, minor: 0, patch: 1})
+CREATE (m)-[:HasVersion { timestamp: timestamp() }]->(o)
+CREATE (m)-[:HasVersion { timestamp: timestamp() }]->(b);
+
+
+MATCH (n:Person {name: 'charlie'})
+MERGE (n)-[r:Registered { timestamp: timestamp() }]->(m:Endpoint {name: '3232'})
+MERGE (o:OperatingSystem {name:'Windows', major:11, minor:1, build:'1234'})
+MERGE (b:Browser {name:'Chrome', major:99, minor: 0, patch: 1})
+CREATE (m)-[:HasVersion { timestamp: timestamp() }]->(o)
+CREATE (m)-[:HasVersion { timestamp: timestamp() }]->(b);
+
+MATCH (n:Person {name: 'dani'})
+MERGE (n)-[r:Registered { timestamp: timestamp() }]->(m:Endpoint {name: '4543'})
+MERGE (o:OperatingSystem {name:'MacOS', major:14, minor:1, build:'21F79'})
+MERGE (b:Browser {name:'Chrome', major:99, minor: 0, patch: 1})
+CREATE (m)-[:HasVersion { timestamp: timestamp() }]->(o)
+CREATE (m)-[:HasVersion { timestamp: timestamp() }]->(b);
