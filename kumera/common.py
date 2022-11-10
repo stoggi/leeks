@@ -1,26 +1,10 @@
-from ariadne import InterfaceType, ObjectType, UnionType, QueryType
+from ariadne import InterfaceType, ObjectType, UnionType, QueryType, MutationType
 from flask import g
 
 from .utils import node_to_dict, edge_to_dict
 
-interface_node = InterfaceType("Node")
-operating_system = ObjectType("OperatingSystem")
-browser = ObjectType("Browser")
 query = QueryType()
-
-@browser.field("version")
-@operating_system.field("version")
-def resolve_version(obj, info):
-    major = obj.get("major", 0)
-    minor = obj.get("minor", 0)
-    patch = obj.get("patch", 0)
-    build = obj.get("build", '')
-    return "{}.{}.{}.{}".format(major, minor, patch, build)
-
-
-@interface_node.type_resolver
-def resolve_interface_node(obj, *_):
-    return obj.get("label", None)
+mutation = MutationType()
 
 
 @query.field("relationships")
@@ -34,10 +18,28 @@ def resolve_relationships(context, info):
     """)
     return result.value()
 
+@mutation.field("registerEndpoint")
+def resolve_register_endpoint(context, info, params):
+    result = g.session.run(
+        """
+        MERGE (e:Endpoint { name: $params.endpoint.name })
+        ON CREATE SET e.id = randomUUID(), e += $params.endpoint
+        ON MATCH SET e += $params.endpoint
+        MERGE (o:OperatingSystem { name: $params.operatingSystem.name, version: $params.operatingSystem.version } )
+        ON CREATE SET o.id = randomUUID(), o += $params.operatingSystem
+        MERGE (p:Person { email: $params.person.email })
+        ON CREATE SET p.id = randomUUID(), p += $params.person
+        ON MATCH SET p += $params.person
+        MERGE (p)-[:registered]->(e)
+        MERGE (e)-[:has]->(o)
+        RETURN
+        e as endpoint, o as operatingSystem, p as person
+        """,
+        params=params,
+    ).single()
+    return result.data()
 
 resolvers = [
     query,
-    operating_system,
-    interface_node,
-    browser,
+    mutation,
 ]

@@ -51,3 +51,594 @@ MERGE (o:OperatingSystem {name:'MacOS', major:14, minor:1, build:'21F79'})
 MERGE (b:Browser {name:'Chrome', major:99, minor: 0, patch: 1})
 CREATE (m)-[:HasVersion { timestamp: timestamp() }]->(o)
 CREATE (m)-[:HasVersion { timestamp: timestamp() }]->(b);
+
+
+
+
+
+
+
+
+
+
+MATCH (n) DETACH DELETE n;
+
+// Customer
+CREATE (Customer:Team { id: randomUUID(), name: 'Customer' })
+
+CREATE (c1:Person { id: randomUUID(), name: 'Gunther', email: 'Gunther@example.com' } )-[:member_of]->(Customer)
+CREATE (c2:Person { id: randomUUID(), name: 'Janice', email: 'Janice@example.com' } )-[:member_of]->(Customer)
+CREATE (:Person { id: randomUUID(), name: 'Carol Willick', email: 'Willick@example.com' } )-[:member_of]->(Customer)
+CREATE (:Person { id: randomUUID(), name: 'Judy Geller', email: 'Judy.Geller@example.com' } )-[:member_of]->(Customer)
+CREATE (:Person { id: randomUUID(), name: 'Jack Geller', email: 'Jack.Geller@example.com' } )-[:member_of]->(Customer)
+CREATE (:Person { id: randomUUID(), name: 'Susan Bunch', email: 'Bunch@example.com' } )-[:member_of]->(Customer)
+CREATE (:Person { id: randomUUID(), name: 'Marcel', email: 'Marcel@example.com' } )-[:member_of]->(Customer)
+CREATE (:Person { id: randomUUID(), name: 'Barry Farber', email: 'Farber@example.com' } )-[:member_of]->(Customer)
+CREATE (:Person { id: randomUUID(), name: 'Mr. Heckles', email: 'Heckles@example.com' } )-[:member_of]->(Customer)
+CREATE (:Person { id: randomUUID(), name: 'Paolo', email: 'Paolo@example.com' } )-[:member_of]->(Customer)
+CREATE (:Person { id: randomUUID(), name: 'Ben Geller', email: 'Ben.Geller@example.com' } )-[:member_of]->(Customer)
+
+CREATE (Zendesk:Service { id: randomUUID(), name: 'Zendesk' })<-[:owns]-(c1)
+CREATE (ServiceNow:Service { id: randomUUID(), name: 'ServiceNow' })<-[:owns]-(c1)
+CREATE (Twilio:Service { id: randomUUID(), name: 'Twilio' })<-[:owns]-(c2)
+
+// Engineering
+CREATE (Engineering:Team { id: randomUUID(), name: 'Engineering' })
+
+CREATE (e1:Person { id: randomUUID(), name: 'Estelle Leonard', email: 'Leonard@example.com' } )-[:member_of]->(Engineering)
+CREATE (e2:Person { id: randomUUID(), name: 'Julie', email: 'Julie@example.com' } )-[:member_of]->(Engineering)
+CREATE (e3:Person { id: randomUUID(), name: 'Mindy Hunter', email: 'Hunter@example.com' } )-[:member_of]->(Engineering)
+CREATE (e4:Person { id: randomUUID(), name: 'Fun Bobby', email: 'Bobby@example.com' } )-[:member_of]->(Engineering)
+CREATE (e5:Person { id: randomUUID(), name: 'Terry', email: 'Terry@example.com' } )-[:member_of]->(Engineering)
+CREATE (:Person { id: randomUUID(), name: 'Mr. Douglas', email: 'Douglas@example.com' } )-[:member_of]->(Engineering)
+CREATE (:Person { id: randomUUID(), name: 'Jasmine', email: 'Jasmine@example.com' } )-[:member_of]->(Engineering)
+CREATE (:Person { id: randomUUID(), name: 'Kiki', email: 'Kiki@example.com' } )-[:member_of]->(Engineering)
+CREATE (:Person { id: randomUUID(), name: 'Nora Tyler Bing', email: 'Nora.Bing@example.com' } )-[:member_of]->(Engineering)
+CREATE (:Person { id: randomUUID(), name: 'David', email: 'David@example.com' } )-[:member_of]->(Engineering)
+CREATE (:Person { id: randomUUID(), name: 'Steve', email: 'Steve@example.com' } )-[:member_of]->(Engineering)
+CREATE (:Person { id: randomUUID(), name: 'Frank Buffay Jr.', email: 'Frank@example.com' } )-[:member_of]->(Engineering)
+CREATE (:Person { id: randomUUID(), name: 'Richard Burke', email: 'Burke@example.com' } )-[:member_of]->(Engineering)
+CREATE (:Person { id: randomUUID(), name: 'Mr. Treeger', email: 'Treeger@example.com' } )-[:member_of]->(Engineering)
+CREATE (:Person { id: randomUUID(), name: 'Sandra Green', email: 'Green@example.com' } )-[:member_of]->(Engineering)
+CREATE (:Person { id: randomUUID(), name: 'Eddie Menuek', email: 'Menuek@example.com' } )-[:member_of]->(Engineering)
+CREATE (:Person { id: randomUUID(), name: 'Dr. Mike Horton', email: 'Horton@example.com' } )-[:member_of]->(Engineering)
+CREATE (:Person { id: randomUUID(), name: 'Joanna', email: 'Joanna@example.com' } )-[:member_of]->(Engineering)
+CREATE (:Person { id: randomUUID(), name: 'Dr. Leonard Green', email: 'Green@example.com' } )-[:member_of]->(Engineering)
+CREATE (:Person { id: randomUUID(), name: 'The Duck', email: 'Duck@example.com' } )-[:member_of]->(Engineering)
+CREATE (:Person { id: randomUUID(), name: 'The Chick', email: 'Chick@example.com' } )-[:member_of]->(Engineering)
+CREATE (:Person { id: randomUUID(), name: 'Sophie', email: 'Sophie@example.com' } )-[:member_of]->(Engineering)
+CREATE (:Person { id: randomUUID(), name: 'Bonnie', email: 'Bonnie@example.com' } )-[:member_of]->(Engineering)
+CREATE (:Person { id: randomUUID(), name: 'Mark Robinson', email: 'Robinson@example.com' } )-[:member_of]->(Engineering)
+CREATE (:Person { id: randomUUID(), name: 'Pete Becker', email: 'Becker@example.com' } )-[:member_of]->(Engineering)
+CREATE (:Person { id: randomUUID(), name: 'Kate Miller', email: 'Miller@example.com' } )-[:member_of]->(Engineering)
+CREATE (:Person { id: randomUUID(), name: 'Marshall Townend', email: 'Townend@example.com' } )-[:member_of]->(Engineering)
+
+CREATE (Github:Service { id: randomUUID(), name: 'Github' })<-[:owns]-(e1)
+CREATE (Bitbucket:Service { id: randomUUID(), name: 'Bitbucket' })
+CREATE (Gitlab:Service { id: randomUUID(), name: 'Gitlab' })<-[:owns]-(e1)
+CREATE (NewRelic:Service { id: randomUUID(), name: 'NewRelic' })<-[:owns]-(e2)
+CREATE (Stripe:Service { id: randomUUID(), name: 'Stripe' })<-[:owns]-(e5)
+CREATE (Jira:Service { id: randomUUID(), name: 'Jira' })<-[:owns]-(e3)
+CREATE (Confluence:Service { id: randomUUID(), name: 'Confluence' })<-[:owns]-(e3)
+CREATE (JFrog:Service { id: randomUUID(), name: 'JFrog' })
+CREATE (Okta:Service { id: randomUUID(), name: 'Okta' })<-[:owns]-(e4)
+CREATE (Shopify:Service { id: randomUUID(), name: 'Shopify' })<-[:owns]-(e5)
+CREATE (Elastic:Service { id: randomUUID(), name: 'Elastic' })<-[:owns]-(e1)
+CREATE (AWS:Service { id: randomUUID(), name: 'AWS' })<-[:owns]-(e1)
+
+// IT
+CREATE (IT:Team { id: randomUUID(), name: 'IT' })
+
+CREATE (i1:Person { id: randomUUID(), name: 'Stephen Waltham', email: 'Waltham@example.com' } )-[:member_of]->(IT)
+CREATE (i2:Person { id: randomUUID(), name: 'Andrea Waltham', email: 'Waltham@example.com' } )-[:member_of]->(IT)
+CREATE (i3:Person { id: randomUUID(), name: 'Stu', email: 'Stu@example.com' } )-[:member_of]->(IT)
+CREATE (:Person { id: randomUUID(), name: 'The Croupier', email: 'Croupier@example.com' } )-[:member_of]->(IT)
+CREATE (:Person { id: randomUUID(), name: 'Gary', email: 'Gary@example.com' } )-[:member_of]->(IT)
+CREATE (:Person { id: randomUUID(), name: 'Danny', email: 'Danny@example.com' } )-[:member_of]->(IT)
+
+CREATE (Zoom:Service { id: randomUUID(), name: 'Zoom' })<-[:owns]-(i1)
+CREATE (Apple:Service { id: randomUUID(), name: 'Apple' })<-[:owns]-(i1)
+CREATE (Google:Service { id: randomUUID(), name: 'Google' })<-[:owns]-(i1)
+CREATE (Slack:Service { id: randomUUID(), name: 'Slack' })<-[:owns]-(i2)
+CREATE (Microsoft:Service { id: randomUUID(), name: 'Microsoft' })<-[:owns]-(i1)
+CREATE (Jamf:Service { id: randomUUID(), name: 'Jamf' })<-[:owns]-(i3)
+
+
+// Finance
+CREATE (Finance:Team { id: randomUUID(), name: 'Finance' })
+
+CREATE (f1:Person { id: randomUUID(), name: 'Dr. Ledbetter', email: 'Ledbetter@example.com' } )-[:member_of]->(Finance)
+CREATE (f2:Person { id: randomUUID(), name: 'Randall', email: 'Randall@example.com' } )-[:member_of]->(Finance)
+CREATE (:Person { id: randomUUID(), name: 'Kim Clozzi', email: 'Clozzi@example.com' } )-[:member_of]->(Finance)
+CREATE (:Person { id: randomUUID(), name: 'Helena Handbasket', email: 'Handbasket@example.com' } )-[:member_of]->(Finance)
+CREATE (:Person { id: randomUUID(), name: 'Mr. Zelner', email: 'Zelner@example.com' } )-[:member_of]->(Finance)
+
+CREATE (Chargify:Service { id: randomUUID(), name: 'Chargify' })<-[:owns]-(f1)
+CREATE (Xero:Service { id: randomUUID(), name: 'Xero' })<-[:owns]-(f1)
+CREATE (Dropbox:Service { id: randomUUID(), name: 'Dropbox' })
+CREATE (Box:Service { id: randomUUID(), name: 'Box' })<-[:owns]-(f1)
+CREATE (Intuit:Service { id: randomUUID(), name: 'Intuit' })<-[:owns]-(f2)
+
+
+// Legal
+CREATE (Legal:Team { id: randomUUID(), name: 'Legal' })
+
+CREATE (l1:Person { id: randomUUID(), name: 'Janine Lecroix', email: 'Lecroix@example.com' } )-[:member_of]->(Legal)
+CREATE (:Person { id: randomUUID(), name: 'Jill Green', email: 'Green@example.com' } )-[:member_of]->(Legal)
+
+CREATE (DocuSign:Service { id: randomUUID(), name: 'DocuSign' })<-[:owns]-(l1)
+
+
+// Marketing
+CREATE (Marketing:Team { id: randomUUID(), name: 'Marketing' })
+
+CREATE (m1:Person { id: randomUUID(), name: 'Lauren', email: 'Lauren@example.com' } )-[:member_of]->(Marketing)
+CREATE (m2:Person { id: randomUUID(), name: 'Mr. Kaplan Jr.', email: 'kaplan@example.com' } )-[:member_of]->(Marketing)
+CREATE (m3:Person { id: randomUUID(), name: 'Chloe', email: 'Chloe@example.com' } )-[:member_of]->(Marketing)
+CREATE (m4:Person { id: randomUUID(), name: 'Isaac', email: 'Isaac@example.com' } )-[:member_of]->(Marketing)
+CREATE (:Person { id: randomUUID(), name: 'Alice Knight Buffay', email: 'Buffay@example.com' } )-[:member_of]->(Marketing)
+CREATE (:Person { id: randomUUID(), name: 'Phoebe Abbot Sr.', email: 'phoebe@example.com' } )-[:member_of]->(Marketing)
+CREATE (:Person { id: randomUUID(), name: 'Doug', email: 'Doug@example.com' } )-[:member_of]->(Marketing)
+CREATE (:Person { id: randomUUID(), name: 'Ugly Naked Guy', email: 'Guy@example.com' } )-[:member_of]->(Marketing)
+CREATE (:Person { id: randomUUID(), name: 'Dina Tribbiani', email: 'Tribbiani@example.com' } )-[:member_of]->(Marketing)
+CREATE (:Person { id: randomUUID(), name: 'Emily Waltham', email: 'Waltham@example.com' } )-[:member_of]->(Marketing)
+CREATE (:Person { id: randomUUID(), name: 'Kathy', email: 'Kathy@example.com' } )-[:member_of]->(Marketing)
+CREATE (:Person { id: randomUUID(), name: 'Joshua Burgin', email: 'Burgin@example.com' } )-[:member_of]->(Marketing)
+CREATE (:Person { id: randomUUID(), name: 'Mr. Waltham', email: 'Waltham@example.com' } )-[:member_of]->(Marketing)
+
+CREATE (Adobe:Service { id: randomUUID(), name: 'Adobe' })<-[:owns]-(m1)
+CREATE (Monday:Service { id: randomUUID(), name: 'Monday' })<-[:owns]-(m2)
+CREATE (GCP:Service { id: randomUUID(), name: 'GCP' })<-[:owns]-(m1)
+CREATE (Marketo:Service { id: randomUUID(), name: 'Marketo' })<-[:owns]-(m1)
+CREATE (Sendgrid:Service { id: randomUUID(), name: 'Sendgrid' })<-[:owns]-(m3)
+CREATE (Tableau:Service { id: randomUUID(), name: 'Tableau' })<-[:owns]-(m3)
+CREATE (SurveyMonkey:Service { id: randomUUID(), name: 'SurveyMonkey' })<-[:owns]-(m3)
+CREATE (Hubspot:Service { id: randomUUID(), name: 'Hubspot' })<-[:owns]-(m3)
+
+
+// HR
+CREATE (HR:Team { id: randomUUID(), name: 'HR' })
+
+CREATE (h1:Person { id: randomUUID(), name: 'Elizabeth Stevens', email: 'Stevens@example.com' } )-[:member_of]->(HR)
+CREATE (:Person { id: randomUUID(), name: 'Paul Stevens', email: 'Stevens@example.com' } )-[:member_of]->(HR)
+CREATE (:Person { id: randomUUID(), name: 'Russell', email: 'Russell@example.com' } )-[:member_of]->(HR)
+
+CREATE (BambooHR:Service { id: randomUUID(), name: 'BambooHR' })<-[:owns]-(h1)
+CREATE (iPayroll:Service { id: randomUUID(), name: 'iPayroll' })<-[:owns]-(h1)
+
+// Security
+CREATE (Security:Team { id: randomUUID(), name: 'Security' })
+
+CREATE (s1:Person { id: randomUUID(), name: 'Dr. Roger', email: 'Roger@example.com' } )-[:member_of]->(Security)
+CREATE (:Person { id: randomUUID(), name: 'Tag Jones', email: 'Jones@example.com' } )-[:member_of]->(Security)
+CREATE (:Person { id: randomUUID(), name: 'Jake', email: 'Jake@example.com' } )-[:member_of]->(Security)
+
+CREATE (Crowdstrike:Service { id: randomUUID(), name: 'Crowdstrike' })<-[:owns]-(s1)
+CREATE (Panther:Service { id: randomUUID(), name: 'Panther' })<-[:owns]-(s1)
+CREATE (Carbonblack:Service { id: randomUUID(), name: 'Carbonblack' })<-[:owns]-(s1)
+CREATE (Splunk:Service { id: randomUUID(), name: 'Splunk' })<-[:owns]-(s1)
+CREATE (Proofpoint:Service { id: randomUUID(), name: 'Proofpoint' })<-[:owns]-(s1)
+
+CREATE (s1)-[:owns]->(Okta)
+
+// Product
+CREATE (Product:Team { id: randomUUID(), name: 'Product' })
+
+CREATE (:Person { id: randomUUID(), name: 'Richard Crosby', email: 'Crosby@example.com' } )-[:member_of]->(Product)
+CREATE (:Person { id: randomUUID(), name: 'Mona', email: 'Mona@example.com' } )-[:member_of]->(Product)
+CREATE (:Person { id: randomUUID(), name: 'Dr. Long', email: 'Long@example.com' } )-[:member_of]->(Product)
+CREATE (:Person { id: randomUUID(), name: 'Eric', email: 'Eric@example.com' } )-[:member_of]->(Product)
+CREATE (:Person { id: randomUUID(), name: 'Parker', email: 'Parker@example.com' } )-[:member_of]->(Product)
+CREATE (:Person { id: randomUUID(), name: 'Emma Geller-Green', email: 'Green@example.com' } )-[:member_of]->(Product)
+CREATE (:Person { id: randomUUID(), name: 'Mike Hannigan', email: 'Hannigan@example.com' } )-[:member_of]->(Product)
+
+// Execs
+CREATE (Exec:Team { id: randomUUID(), name: 'Exec' })
+
+CREATE (:Person { id: randomUUID(), name: 'Charlie Wheeler', email: 'Wheeler@example.com' } )-[:member_of]->(Exec)
+CREATE (:Person { id: randomUUID(), name: 'Gavin Mitchell', email: 'Mitchell@example.com' } )-[:member_of]->(Exec)
+CREATE (:Person { id: randomUUID(), name: 'Steve', email: 'Steve@example.com' } )-[:member_of]->(Exec)
+CREATE (:Person { id: randomUUID(), name: 'Molly', email: 'Molly@example.com' } )-[:member_of]->(Exec)
+CREATE (:Person { id: randomUUID(), name: 'Claudia', email: 'Claudia@example.com' } )-[:member_of]->(Exec)
+
+// Anon
+
+CREATE (a1:Person { id: randomUUID(), name: 'Amy Green', email: 'Green@example.com' } )
+CREATE (a2:Person { id: randomUUID(), name: 'Clifford Burnett', email: 'Burnett@example.com' } )
+
+CREATE (Salesforce:Service { id: randomUUID(), name: 'Salesforce' })<-[:owns]-(a1)
+CREATE (a2)-[:owns]->(Github)
+
+CREATE (:Person { id: randomUUID(), name: 'Ken', email: 'Ken@example.com' } )
+CREATE (:Person { id: randomUUID(), name: 'Bitsy Hannigan', email: 'Hannigan@example.com' } )
+CREATE (:Person { id: randomUUID(), name: 'Theodore Hannigan', email: 'Hannigan@example.com' } )
+CREATE (:Person { id: randomUUID(), name: 'The Waiter', email: 'Waiter@example.com' } )
+CREATE (:Person { id: randomUUID(), name: 'Erica', email: 'Erica@example.com' } )
+CREATE (:Person { id: randomUUID(), name: 'Jack & Erica Bing', email: 'Jack.Bing@example.com' } )
+
+
+
+
+CREATE (CustomerList:Asset { id: randomUUID(), name: 'CustomerList', classification: 'CONFIDENTIAL' })
+CREATE (SupportEmails:Asset { id: randomUUID(), name: 'SupportEmails', classification: 'INTERNAL' })
+CREATE (CustomerPhoneRecordings:Asset { id: randomUUID(), name: 'CustomerPhoneRecordings', classification: 'CONFIDENTIAL' })
+CREATE (CustomerCreditCards:Asset { id: randomUUID(), name: 'CustomerCreditCards', classification: 'RESTRICTED' })
+
+CREATE (Zendesk)-[:stores]->(CustomerList)
+CREATE (Zendesk)-[:stores]->(CustomerCreditCards)
+CREATE (ServiceNow)-[:stores]->(SupportEmails)
+CREATE (Twilio)-[:stores]->(CustomerPhoneRecordings)
+
+CREATE (SourceCode:Asset { id: randomUUID(), name: 'SourceCode', classification: 'CONFIDENTIAL' })
+CREATE (IntellectualProperty:Asset { id: randomUUID(), name: 'IntellectualProperty', classification: 'INTERNAL' })
+CREATE (ApplicationLogs:Asset { id: randomUUID(), name: 'ApplicationLogs', classification: 'INTERNAL' })
+CREATE (CreditCardTokens:Asset { id: randomUUID(), name: 'CreditCardTokens', classification: 'RESTRICTED' })
+CREATE (ProductRoadmap:Asset { id: randomUUID(), name: 'ProductRoadmap', classification: 'INTERNAL' })
+CREATE (ProductIssues:Asset { id: randomUUID(), name: 'ProductIssues', classification: 'INTERNAL' })
+CREATE (EmployeeDirectory:Asset { id: randomUUID(), name: 'EmployeeDirectory', classification: 'INTERNAL' })
+CREATE (InfrastructureLogs:Asset { id: randomUUID(), name: 'InfrastructureLogs', classification: 'INTERNAL' })
+CREATE (CustomerDatabase:Asset { id: randomUUID(), name: 'CustomerDatabase', classification: 'RESTRICTED' })
+CREATE (DatabaseCredentials:Asset { id: randomUUID(), name: 'DatabaseCredentials', classification: 'RESTRICTED' })
+CREATE (BusinessProcesses:Asset { id: randomUUID(), name: 'BusinessProcesses', classification: 'INTERNAL' })
+CREATE (Identity:Asset { id: randomUUID(), name: 'Identity' })
+
+CREATE (Github)-[:stores]->(SourceCode)
+CREATE (Github)-[:stores]->(IntellectualProperty)
+CREATE (Github)-[:stores]->(DatabaseCredentials)
+CREATE (Bitbucket)-[:stores]->(SourceCode)
+CREATE (Bitbucket)-[:stores]->(IntellectualProperty)
+CREATE (Gitlab)-[:stores]->(SourceCode)
+CREATE (Gitlab)-[:stores]->(IntellectualProperty)
+CREATE (NewRelic)-[:stores]->(ApplicationLogs)
+CREATE (NewRelic)-[:stores]->(CreditCardTokens)
+CREATE (Stripe)-[:stores]->(CreditCardTokens)
+CREATE (Jira)-[:stores]->(ProductRoadmap)
+CREATE (Jira)-[:stores]->(ProductIssues)
+CREATE (Jira)-[:stores]->(EmployeeDirectory)
+CREATE (Confluence)-[:stores]->(ProductRoadmap)
+CREATE (Confluence)-[:stores]->(EmployeeDirectory)
+CREATE (Confluence)-[:stores]->(BusinessProcesses)
+CREATE (JFrog)-[:stores]->(SourceCode)
+CREATE (JFrog)-[:stores]->(IntellectualProperty)
+CREATE (JFrog)-[:stores]->(DatabaseCredentials)
+CREATE (Okta)-[:stores]->(EmployeeDirectory)
+CREATE (Okta)-[:controls]->(Identity)
+CREATE (Shopify)-[:stores]->(IntellectualProperty)
+CREATE (Elastic)-[:stores]->(InfrastructureLogs)
+CREATE (AWS)-[:stores]->(CustomerDatabase)
+CREATE (AWS)-[:stores]->(SourceCode)
+CREATE (AWS)-[:stores]->(DatabaseCredentials)
+CREATE (AWS)-[:stores]->(IntellectualProperty)
+CREATE (AWS)-[:controls]->(CustomerDatabase)
+
+CREATE (EmployeeLaptops:Asset { id: randomUUID(), name: 'EmployeeLaptops', classification: 'INTERNAL' })
+CREATE (InternalMessages:Asset { id: randomUUID(), name: 'InternalMessages', classification: 'INTERNAL' })
+CREATE (PrivateMessages:Asset { id: randomUUID(), name: 'PrivateMessages', classification: 'PRIVATE' })
+
+CREATE (Apple)-[:contols]->(EmployeeLaptops)
+CREATE (Google)-[:stores]->(EmployeeDirectory)
+CREATE (Slack)-[:stores]->(InternalMessages)
+CREATE (Slack)-[:stores]->(PrivateMessages)
+CREATE (Slack)-[:stores]->(DatabaseCredentials)
+CREATE (Microsoft)-[:contols]->(EmployeeLaptops)
+CREATE (Jamf)-[:contols]->(EmployeeLaptops)
+
+CREATE (FinancialDocuments:Asset { id: randomUUID(), name: 'FinancialDocuments', classification: 'CONFIDENTIAL' })
+CREATE (BusinessContracts:Asset { id: randomUUID(), name: 'BusinessContracts', classification: 'INTERNAL' })
+CREATE (EmployeeContracts:Asset { id: randomUUID(), name: 'EmployeeContracts', classification: 'CONFIDENTIAL' })
+CREATE (EmployeeBankAccounts:Asset { id: randomUUID(), name: 'EmployeeBankAccounts', classification: 'CONFIDENTIAL' })
+
+CREATE (Chargify)-[:stores]->(CreditCardTokens)
+CREATE (Chargify)-[:stores]->(CustomerList)
+CREATE (Xero)-[:stores]->(FinancialDocuments)
+CREATE (Xero)-[:stores]->(BusinessContracts)
+CREATE (Dropbox)-[:stores]->(BusinessContracts)
+CREATE (Dropbox)-[:stores]->(EmployeeContracts)
+CREATE (Dropbox)-[:stores]->(FinancialDocuments)
+CREATE (Dropbox)-[:stores]->(CustomerList)
+CREATE (Dropbox)-[:stores]->(EmployeeBankAccounts)
+CREATE (Box)-[:stores]->(FinancialDocuments)
+
+CREATE (LegalDocuments:Asset { id: randomUUID(), name: 'LegalDocuments', classification: 'CONFIDENTIAL' })
+
+CREATE (DocuSign)-[:stores]->(LegalDocuments)
+CREATE (DocuSign)-[:stores]->(BusinessContracts)
+CREATE (DocuSign)-[:stores]->(EmployeeContracts)
+
+CREATE (GraphicAssets:Asset { id: randomUUID(), name: 'GraphicAssets', classification: 'INTERNAL' })
+
+CREATE (Adobe)-[:stores]->(GraphicAssets)
+CREATE (GCP)-[:stores]->(CustomerList)
+CREATE (Marketo)-[:stores]->(CustomerList)
+CREATE (Sendgrid)-[:stores]->(CustomerList)
+CREATE (Tableau)-[:stores]->(IntellectualProperty)
+CREATE (SurveyMonkey)-[:stores]->(CustomerList)
+CREATE (Hubspot)-[:stores]->(CustomerList)
+
+CREATE (EmployeeData:Asset { id: randomUUID(), name: 'EmployeeData', classification: 'CONFIDENTIAL' })
+
+CREATE (BambooHR)-[:stores]->(EmployeeDirectory)
+CREATE (BambooHR)-[:stores]->(EmployeeData)
+CREATE (iPayroll)-[:stores]->(EmployeeData)
+CREATE (iPayroll)-[:stores]->(EmployeeBankAccounts)
+
+CREATE (SecurityLogs:Asset { id: randomUUID(), name: 'SecurityLogs', classification: 'CONFIDENTIAL' })
+
+CREATE (Splunk)-[:stores]->(SecurityLogs)
+CREATE (Panther)-[:stores]->(SecurityLogs)
+CREATE (Crowdstrike)-[:manages]->(EmployeeLaptops)
+CREATE (Carbonblack)-[:manages]->(EmployeeLaptops)
+CREATE (Proofpoint)-[:stores]->(InternalMessages)
+
+CREATE (Salesforce)-[:stores]->(CustomerDatabase)
+CREATE (Salesforce)-[:stores]->(CustomerList)
+CREATE (Salesforce)-[:stores]->(IntellectualProperty)
+CREATE (Salesforce)-[:stores]->(BusinessProcesses)
+
+CREATE (LoseSales:Impact { id: randomUUID(), name: 'LoseSales' })
+CREATE (LoseCustomers:Impact { id: randomUUID(), name: 'LoseCustomers' })
+CREATE (LoseMoney:Impact { id: randomUUID(), name: 'LoseMoney' })
+CREATE (LoseReputation:Impact { id: randomUUID(), name: 'LoseReputation' })
+CREATE (UnhappyEmployees:Impact { id: randomUUID(), name: 'UnhappyEmployees' })
+CREATE (RegulatoryFines:Impact { id: randomUUID(), name: 'RegulatoryFines' })
+CREATE (MoreCompetition:Impact { id: randomUUID(), name: 'MoreCompetition' })
+CREATE (LoseCompany:Impact { id: randomUUID(), name: 'LoseCompany' })
+
+
+CREATE (CustomerList)-[:lost_confidentiality]->(LoseSales)
+CREATE (CustomerList)-[:lost_confidentiality]->(LoseReputation)
+CREATE (CustomerList)-[:lost_confidentiality]->(RegulatoryFines)
+CREATE (CustomerList)-[:lost_confidentiality]->(MoreCompetition)
+CREATE (CustomerList)-[:lost_confidentiality]->(LoseCustomers)
+// CREATE (CustomerList)-[:lost_availability]->(LoseSales)
+CREATE (CustomerList)-[:lost_integrity]->(LoseSales)
+
+CREATE (SupportEmails)-[:lost_confidentiality]->(LoseSales)
+CREATE (SupportEmails)-[:lost_confidentiality]->(LoseReputation)
+CREATE (SupportEmails)-[:lost_confidentiality]->(RegulatoryFines)
+CREATE (SupportEmails)-[:lost_confidentiality]->(MoreCompetition)
+CREATE (SupportEmails)-[:lost_confidentiality]->(LoseCustomers)
+CREATE (SupportEmails)-[:lost_availability]->(LoseCustomers)
+// CREATE (SupportEmails)-[:lost_integrity]->(LoseReputation)
+
+CREATE (CustomerPhoneRecordings)-[:lost_confidentiality]->(LoseSales)
+CREATE (CustomerPhoneRecordings)-[:lost_confidentiality]->(LoseReputation)
+CREATE (CustomerPhoneRecordings)-[:lost_confidentiality]->(RegulatoryFines)
+// CREATE (CustomerPhoneRecordings)-[:lost_availability]->(LoseSales)
+CREATE (CustomerPhoneRecordings)-[:lost_integrity]->(RegulatoryFines)
+
+CREATE (CustomerCreditCards)-[:lost_confidentiality]->(LoseSales)
+CREATE (CustomerCreditCards)-[:lost_confidentiality]->(LoseReputation)
+CREATE (CustomerCreditCards)-[:lost_confidentiality]->(LoseCustomers)
+CREATE (CustomerCreditCards)-[:lost_confidentiality]->(RegulatoryFines)
+CREATE (CustomerCreditCards)-[:lost_confidentiality]->(LoseMoney)
+CREATE (CustomerCreditCards)-[:lost_availability]->(LoseSales)
+CREATE (CustomerCreditCards)-[:lost_availability]->(LoseCustomers)
+CREATE (CustomerCreditCards)-[:lost_availability]->(LoseReputation)
+CREATE (CustomerCreditCards)-[:lost_integrity]->(RegulatoryFines)
+CREATE (CustomerCreditCards)-[:lost_integrity]->(LoseSales)
+
+CREATE (SourceCode)-[:lost_confidentiality]->(LoseReputation)
+CREATE (SourceCode)-[:lost_confidentiality]->(MoreCompetition)
+CREATE (SourceCode)-[:lost_availability]->(LoseSales)
+CREATE (SourceCode)-[:lost_integrity]->(LoseSales)
+CREATE (SourceCode)-[:lost_integrity]->(LoseReputation)
+CREATE (SourceCode)-[:lost_integrity]->(LoseCustomers)
+CREATE (SourceCode)-[:lost_integrity]->(RegulatoryFines)
+CREATE (SourceCode)-[:lost_integrity]->(LoseMoney)
+CREATE (SourceCode)-[:lost_integrity]->(LoseCompany)
+
+CREATE (IntellectualProperty)-[:lost_confidentiality]->(LoseReputation)
+CREATE (IntellectualProperty)-[:lost_confidentiality]->(MoreCompetition)
+// CREATE (IntellectualProperty)-[:lost_availability]->(LoseSales)
+// CREATE (IntellectualProperty)-[:lost_integrity]->(LoseReputation)
+
+CREATE (ApplicationLogs)-[:lost_confidentiality]->(RegulatoryFines)
+CREATE (ApplicationLogs)-[:lost_availability]->(LoseSales)
+CREATE (ApplicationLogs)-[:lost_integrity]->(RegulatoryFines)
+
+CREATE (CreditCardTokens)-[:lost_confidentiality]->(LoseSales)
+CREATE (CreditCardTokens)-[:lost_confidentiality]->(LoseCustomers)
+CREATE (CreditCardTokens)-[:lost_confidentiality]->(LoseReputation)
+CREATE (CreditCardTokens)-[:lost_confidentiality]->(RegulatoryFines)
+CREATE (CreditCardTokens)-[:lost_availability]->(LoseSales)
+CREATE (CreditCardTokens)-[:lost_integrity]->(LoseSales)
+
+CREATE (ProductRoadmap)-[:lost_confidentiality]->(MoreCompetition)
+// CREATE (ProductRoadmap)-[:lost_availability]->(LoseSales)
+// CREATE (ProductRoadmap)-[:lost_integrity]->(LoseReputation)
+
+CREATE (ProductIssues)-[:lost_confidentiality]->(LoseReputation)
+CREATE (ProductIssues)-[:lost_confidentiality]->(LoseCustomers)
+// CREATE (ProductIssues)-[:lost_availability]->(LoseSales)
+CREATE (ProductIssues)-[:lost_integrity]->(LoseReputation)
+
+CREATE (EmployeeDirectory)-[:lost_confidentiality]->(UnhappyEmployees)
+CREATE (EmployeeDirectory)-[:lost_confidentiality]->(RegulatoryFines)
+// CREATE (EmployeeDirectory)-[:lost_availability]->(LoseSales)
+CREATE (EmployeeDirectory)-[:lost_integrity]->(LoseMoney)
+CREATE (EmployeeDirectory)-[:lost_integrity]->(LoseCompany)
+
+
+CREATE (InfrastructureLogs)-[:lost_confidentiality]->(RegulatoryFines)
+// CREATE (InfrastructureLogs)-[:lost_availability]->(LoseSales)
+CREATE (InfrastructureLogs)-[:lost_integrity]->(RegulatoryFines)
+
+
+CREATE (CustomerDatabase)-[:lost_confidentiality]->(LoseSales)
+CREATE (CustomerDatabase)-[:lost_confidentiality]->(LoseCustomers)
+CREATE (CustomerDatabase)-[:lost_confidentiality]->(LoseReputation)
+CREATE (CustomerDatabase)-[:lost_confidentiality]->(RegulatoryFines)
+CREATE (CustomerDatabase)-[:lost_confidentiality]->(LoseCompany)
+CREATE (CustomerDatabase)-[:lost_availability]->(LoseSales)
+CREATE (CustomerDatabase)-[:lost_availability]->(LoseReputation)
+CREATE (CustomerDatabase)-[:lost_integrity]->(LoseCustomers)
+
+
+CREATE (DatabaseCredentials)-[:lost_confidentiality]->(LoseSales)
+CREATE (DatabaseCredentials)-[:lost_confidentiality]->(LoseCustomers)
+CREATE (DatabaseCredentials)-[:lost_confidentiality]->(LoseReputation)
+CREATE (DatabaseCredentials)-[:lost_confidentiality]->(RegulatoryFines)
+CREATE (DatabaseCredentials)-[:lost_confidentiality]->(LoseCompany)
+// CREATE (DatabaseCredentials)-[:lost_availability]->(LoseSales)
+// CREATE (DatabaseCredentials)-[:lost_integrity]->(LoseReputation)
+
+
+CREATE (BusinessProcesses)-[:lost_confidentiality]->(MoreCompetition)
+CREATE (BusinessProcesses)-[:lost_availability]->(LoseMoney)
+// CREATE (BusinessProcesses)-[:lost_integrity]->(LoseReputation)
+
+
+CREATE (Identity)-[:lost_confidentiality]->(UnhappyEmployees)
+CREATE (Identity)-[:lost_confidentiality]->(RegulatoryFines)
+CREATE (Identity)-[:lost_availability]->(LoseMoney)
+CREATE (Identity)-[:lost_integrity]->(LoseCompany)
+
+
+CREATE (EmployeeLaptops)-[:lost_confidentiality]->(UnhappyEmployees)
+CREATE (EmployeeLaptops)-[:lost_confidentiality]->(LoseReputation)
+CREATE (EmployeeLaptops)-[:lost_confidentiality]->(LoseMoney)
+CREATE (EmployeeLaptops)-[:lost_availability]->(LoseMoney)
+CREATE (EmployeeLaptops)-[:lost_integrity]->(LostCompany)
+
+
+CREATE (InternalMessages)-[:lost_confidentiality]->(UnhappyEmployees)
+CREATE (InternalMessages)-[:lost_confidentiality]->(LoseCustomers)
+CREATE (InternalMessages)-[:lost_confidentiality]->(LoseReputation)
+CREATE (InternalMessages)-[:lost_availability]->(LoseMoney)
+// CREATE (InternalMessages)-[:lost_integrity]->(LoseReputation)
+
+
+CREATE (PrivateMessages)-[:lost_confidentiality]->(UnhappyEmployees)
+CREATE (PrivateMessages)-[:lost_confidentiality]->(LoseCustomers)
+CREATE (PrivateMessages)-[:lost_confidentiality]->(LoseReputation)
+// CREATE (PrivateMessages)-[:lost_availability]->(LoseSales)
+// CREATE (PrivateMessages)-[:lost_integrity]->(LoseReputation)
+
+
+CREATE (FinancialDocuments)-[:lost_confidentiality]->(LoseSales)
+CREATE (FinancialDocuments)-[:lost_confidentiality]->(RegulatoryFines)
+CREATE (FinancialDocuments)-[:lost_confidentiality]->(MoreCompetition)
+CREATE (FinancialDocuments)-[:lost_confidentiality]->(LoseMoney)
+CREATE (FinancialDocuments)-[:lost_availability]->(LoseMoney)
+CREATE (FinancialDocuments)-[:lost_integrity]->(LoseMoney)
+
+
+CREATE (BusinessContracts)-[:lost_confidentiality]->(MoreCompetition)
+CREATE (BusinessContracts)-[:lost_confidentiality]->(LoseMoney)
+CREATE (BusinessContracts)-[:lost_availability]->(LoseMoney)
+CREATE (BusinessContracts)-[:lost_integrity]->(LoseMoney)
+
+
+CREATE (EmployeeContracts)-[:lost_confidentiality]->(UnhappyEmployees)
+CREATE (EmployeeContracts)-[:lost_confidentiality]->(RegulatoryFines)
+// CREATE (EmployeeContracts)-[:lost_availability]->(LoseSales)
+CREATE (EmployeeContracts)-[:lost_integrity]->(LoseMoney)
+
+
+CREATE (EmployeeBankAccounts)-[:lost_confidentiality]->(UnhappyEmployees)
+CREATE (EmployeeBankAccounts)-[:lost_confidentiality]->(RegulatoryFines)
+// CREATE (EmployeeBankAccounts)-[:lost_availability]->(LoseSales)
+CREATE (EmployeeBankAccounts)-[:lost_integrity]->(LoseMoney)
+
+
+CREATE (LegalDocuments)-[:lost_confidentiality]->(MoreCompetition)
+CREATE (LegalDocuments)-[:lost_confidentiality]->(LoseMoney)
+CREATE (LegalDocuments)-[:lost_confidentiality]->(LoseReputation)
+CREATE (LegalDocuments)-[:lost_availability]->(LoseMoney)
+CREATE (LegalDocuments)-[:lost_integrity]->(LoseMoney)
+CREATE (LegalDocuments)-[:lost_integrity]->(LoseReputation)
+
+
+// CREATE (GraphicAssets)-[:lost_confidentiality]->(LoseSales)
+CREATE (GraphicAssets)-[:lost_availability]->(LoseMoney)
+// CREATE (GraphicAssets)-[:lost_integrity]->(LoseReputation)
+
+
+CREATE (EmployeeData)-[:lost_confidentiality]->(UnhappyEmployees)
+CREATE (EmployeeData)-[:lost_confidentiality]->(RegulatoryFines)
+CREATE (EmployeeData)-[:lost_confidentiality]->(LoseReputation)
+// CREATE (EmployeeData)-[:lost_availability]->(LoseSales)
+// CREATE (EmployeeData)-[:lost_integrity]->(LoseCompany)
+
+CREATE (SecurityLogs)-[:lost_confidentiality]->(LoseSales)
+CREATE (SecurityLogs)-[:lost_confidentiality]->(LoseReputation)
+CREATE (SecurityLogs)-[:lost_confidentiality]->(RegulatoryFines)
+CREATE (SecurityLogs)-[:lost_availability]->(RegulatoryFines)
+CREATE (SecurityLogs)-[:lost_integrity]->(LoseReputation)
+CREATE (SecurityLogs)-[:lost_integrity]->(RegulatoryFines)
+
+;
+CREATE INDEX PersonIndex FOR (n:Person) ON (n.name);
+CREATE INDEX ServiceIndex FOR (n:Service) ON (n.name);
+CREATE INDEX ImpactIndex FOR (n:Impact) ON (n.name);
+CREATE INDEX AssetIndex FOR (n:Asset) ON (n.name);
+CREATE INDEX TeamIndex FOR (n:Team) ON (n.name);
+
+CREATE CONSTRAINT FOR (n:Person) REQUIRE n.name IS UNIQUE;
+CREATE CONSTRAINT FOR (n:Person) REQUIRE n.email IS UNIQUE;
+CREATE CONSTRAINT FOR (n:Service) REQUIRE n.name IS UNIQUE;
+CREATE CONSTRAINT FOR (n:Impact) REQUIRE n.name IS UNIQUE;
+CREATE CONSTRAINT FOR (n:Asset) REQUIRE n.name IS UNIQUE;
+CREATE CONSTRAINT FOR (n:Team) REQUIRE n.name IS UNIQUE;
+
+
+// CREATE (Customer)-[:can_access]->()
+// Customer
+// Engineering
+// IT
+// Finance
+// Legal
+// Marketing
+// HR
+// Security
+// Product
+// Exec
+
+
+// Zendesk
+// ServiceNow
+// Twilio
+// Github
+// Bitbucket
+// Gitlab
+// NewRelic
+// Stripe
+// Jira
+// Confluence
+// JFrog
+// Okta
+// Shopify
+// Elastic
+// AWS
+// Zoom
+// Apple
+// Google
+// Slack
+// Microsoft
+// Jamf
+// Chargify
+// Xero
+// Dropbox
+// Box
+// Intuit
+// DocuSign
+// Adobe
+// Monday
+// GCP
+// Marketo
+// Sendgrid
+// Tableau
+// SurveyMonkey
+// Hubspot
+// BambooHR
+// iPayroll
+// Crowdstrike
+// Panther
+// Carbonblack
+// Splunk
+// Proofpoint
+// Salesforce
+
+
+

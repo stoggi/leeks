@@ -11,7 +11,7 @@ resolvers = [query, mutation]
 @query.field("operatingSystemsUsedByPersons")
 def resolve_operating_systems_used_by_persons(context, info):
     result = g.session.run(
-        "MATCH (n:OperatingSystem)<-[r:HasVersion]-(:Endpoint)<-[:Registered]-(p:Person) RETURN n as operatingSystem, collect(p) as persons"
+        "MATCH (n:OperatingSystem)<-[r:has]-(:Endpoint)<-[:registered]-(p:Person) RETURN n as operatingSystem, collect(distinct p) as persons"
     )
     return result.data()
 
