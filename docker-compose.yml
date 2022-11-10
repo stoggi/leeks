@@ -1,33 +1,44 @@
 version: '3.8'
 services:
 
-  savoy:
+  kumera:
     build: .
     ports:
       - "8080:8080"
     environment:
       - POSTGRES_PASSWORD=password
 
-  age:
-    image: apache/age:latest
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_PASSWORD=password
-    volumes:
-      - db-data:/var/lib/postgresql/data
+  # age:
+  #   image: apache/age:latest
+  #   ports:
+  #     - "5432:5432"
+  #   environment:
+  #     - POSTGRES_PASSWORD=password
+  #   volumes:
+  #     - db-data:/var/lib/postgresql/data
 
-  memgraph:
-    image: memgraph/memgraph-platform
+  # memgraph:
+  #   image: memgraph/memgraph-platform
+  #   ports:
+  #     - "7687:7687"
+  #     - "3001:3000"
+  #     - "7444:7444"
+  #   volumes:
+  #     - mg_lib:/var/lib/memgraph
+  #     - mg_log:/var/log/memgraph
+  #     - mg_etc:/etc/memgraph
+  #   entrypoint: ["/usr/bin/supervisord"]
+
+  neo4j:
+    image: neo4j:latest
     ports:
-      - "7687:7687"
-      - "3001:3000"
-      - "7444:7444"
+      - 7687:7687
+      - 7474:7474
     volumes:
-      - mg_lib:/var/lib/memgraph
-      - mg_log:/var/log/memgraph
-      - mg_etc:/etc/memgraph
-    entrypoint: ["/usr/bin/supervisord"]
+      - neo4j-data:/data/
+    environment:
+      - NEO4J_AUTH=none
+  # cat data.cypherl | docker compose exec neo4j cypher-shell
 
   grafana:
     image: grafana/grafana-oss
@@ -38,6 +49,17 @@ services:
     environment:
       - GF_INSTALL_PLUGINS=fifemon-graphql-datasource
 
+  slides:
+    image: cloudogu/reveal.js:dev
+    volumes:
+      - ./slides:/reveal/docs/slides
+    environment:
+      - TITLE=SaaS - Security as a SecondThought
+      - ADDITIONAL_REVEAL_OPTIONS=transition:'none'
+      - THEME_CSS=cloudogu-black.css
+    ports:
+      - 8000:8000
+      - 35729:35729
 
 volumes:
   db-data:
@@ -46,3 +68,4 @@ volumes:
   mg_log:
   mg_etc:
   grafana-storage:
+  neo4j-data:

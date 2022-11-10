@@ -1,24 +1,20 @@
 <!doctype html>
 <title>{% block title %}{% endblock %} - Savoy</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-<nav>
-  <h1>Savoy</h1>
-  <ul>
-    {% if g.user %}
-      <li><span>{{ g.user['username'] }}</span>
-      <li><a href="#">Log Out</a>
-    {% else %}
-      <li><a href="#">Register</a>
-      <li><a href="#">Log In</a>
-    {% endif %}
-  </ul>
-</nav>
-<section class="content">
+
+
+<div class="w3-container w3-grey">
   <header>
     {% block header %}{% endblock %}
   </header>
-  {% for message in get_flashed_messages() %}
-    <div class="flash">{{ message }}</div>
-  {% endfor %}
+</div>
+
+{% for message in get_flashed_messages() %}
+  <div class="w3-container w3-red">{{ message }}</div>
+{% endfor %}
+
+<div class="w3-container">
   {% block content %}{% endblock %}
-</section>
+</div>
