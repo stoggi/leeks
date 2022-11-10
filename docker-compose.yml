@@ -29,18 +29,6 @@ services:
     environment:
       - GF_INSTALL_PLUGINS=fifemon-graphql-datasource
 
-  # slides:
-  #   image: cloudogu/reveal.js:dev
-  #   volumes:
-  #     - ./slides:/reveal/docs/slides
-  #   environment:
-  #     - TITLE=SaaS - Security as a SecondThought
-  #     - ADDITIONAL_REVEAL_OPTIONS=transition:'none'
-  #     - THEME_CSS=cloudogu-black.css
-  #   ports:
-  #     - 8000:8000
-  #     - 35729:35729
-
 volumes:
   grafana-storage:
   neo4j-data:
