@@ -11,15 +11,26 @@ resolvers = [query, mutation]
 @query.field('browser')
 def resolve_browser(context, info):
     result = g.session.run("MATCH (n:Browser) RETURN n")
-    return ( node_to_dict(n) for n, in result )
+    return result.value()
 
 @mutation.field('createBrowser')
-def resolve_create_browser(context, info, browser):
+def resolve_create_browser(context, info, params):
     result = g.session.run(
-        "CREATE (n:Browser { name: $name, major: $major, minor: $minor, patch: $patch }) RETURN n",
-        name=browser.get("name", None),
-        major=browser.get("major", None),
-        minor=browser.get("minor", None),
-        patch=browser.get("patch", None),
-    )
-    return node_to_dict(result.single()["n"])
+        "CREATE (n:Browser { id: randomUUID()} ) SET n += $params RETURN n",
+        params=params,
+    ).single()
+    if result:
+        return { "browser": result.value() }
+    else:
+        return { "error": "unable to create." }
+
+@mutation.field('updateBrowser')
+def resolve_update_browser(context, info, params):
+    result = g.session.run(
+        "MATCH (n:Browser { id: $params.id }) SET n += $params RETURN n",
+        params=params,
+    ).single()
+    if result:
+        return { "browser": result.value() }
+    else:
+        return { "error": "not found." }

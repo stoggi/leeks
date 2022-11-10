@@ -13,8 +13,8 @@ def resolve_grafana(_, info):
     nodes = {}
     edges = []
     for n, r, m in result:
-        nodes[n.id] = {"id": n.id, "title": ",".join(n.labels), "subtitle": n.properties["name"]}
-        nodes[m.id] = {"id": m.id, "title": ",".join(m.labels), "subtitle": m.properties["name"]}
+        nodes[n.id] = {"id": n.id, "title": ",".join(n.labels), "subtitle": n["name"]}
+        nodes[m.id] = {"id": m.id, "title": ",".join(m.labels), "subtitle": m["name"]}
         edges.append({
             "id": r.id,
             "source": n.id,

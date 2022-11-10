@@ -6,20 +6,24 @@ enum DataClassification {
     RESTRICTED
 }
 
-type Asset implements Node {
+type Asset {
     id: String!
-    label: String!
     name: String!
     classification: DataClassification
 }
+
 input CreateAsset {
     name: String!
     classification: DataClassification
 }
+
 input UpdateAsset {
     id: String!
     name: String!
     classification: DataClassification
 }
 
-union AssetResult = Asset | Error
+type AssetResult {
+    asset: Asset
+    error: String
+}

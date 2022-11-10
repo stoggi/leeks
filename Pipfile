@@ -10,6 +10,8 @@ ariadne = "*"
 typing-extensions = "*"
 pymgclient = "*"
 neo4j = "*"
+authlib = "*"
+requests = "*"
 
 [dev-packages]
 

@@ -11,28 +11,28 @@ resolvers = [query, mutation]
 @query.field('asset')
 def resolve_asset(context, info, id=None, name=None):
     result = g.session.run(
-        "MATCH (n:Asset) WHERE n.id = $id AND n.name = $name RETURN n",
-        id=id,
-        name=name,
+        "MATCH (n:Asset) RETURN n",
     )
-    return ( node_to_dict(n) for n, in result )
+    return result.value()
 
-
-# mutation {
-#   createAsset(asset: {name: "jeremy"}) {
-#     ... on Asset {
-#       id name classification
-#     }
-#     ... on Error {
-#       message
-#     }
-#   }
-# }
 @mutation.field('createAsset')
-def resolve_create_asset(context, info, asset):
+def resolve_create_asset(context, info, params):
     result = g.session.run(
-        "CREATE (n:Asset { name: $name, classification: $classification }) RETURN n",
-        name=asset.get("name", None),
-        classification=asset.get("classification", None),
-    )
-    return node_to_dict(result.single()["n"])
+        "CREATE (n:Asset { id: randomUUID()}) SET n += $params RETURN n",
+        params=params,
+    ).single()
+    if result:
+        return { "asset": result.value() }
+    else:
+        return { "error": "unable to create." }
+
+@mutation.field('updateAsset')
+def resolve_update_asset(context, info, params):
+    result = g.session.run(
+        "MATCH (n:Asset { id: $params.id }) SET n += $params RETURN n",
+        params=params,
+    ).single()
+    if result:
+        return { "asset": result.value() }
+    else:
+        return { "error": "not found." }

@@ -11,29 +11,33 @@ resolvers = [query, mutation]
 @query.field("operatingSystemsUsedByPersons")
 def resolve_operating_systems_used_by_persons(context, info):
     result = g.session.run(
-        "MATCH (n:OperatingSystem)<-[r:HasVersion]-(:Endpoint)<-[:Registered]-(p:Person) RETURN n, collect(p)"
+        "MATCH (n:OperatingSystem)<-[r:HasVersion]-(:Endpoint)<-[:Registered]-(p:Person) RETURN n as operatingSystem, collect(p) as persons"
     )
-    return (
-        { 
-            "operatingSystem": node_to_dict(n),
-            "persons": ( node_to_dict(p) for p in collect_p ),
-        } 
-        for n, collect_p in result
-    )
+    return result.data()
 
 @query.field('operatingSystem')
 def resolve_operatingsystem(context, info):
     result = g.session.run("MATCH (n:OperatingSystem) RETURN n")
-    return ( node_to_dict(n) for n, in result )
+    return result.value()
 
 @mutation.field('createOperatingSystem')
-def resolve_create_operating_system(context, info, operatingSystem):
+def resolve_create_operating_system(context, info, params):
     result = g.session.run(
-        "CREATE (n:OperatingSystem { name: $name, major: $major, minor: $minor, patch: $patch, build: $build }) RETURN n",
-        name=operatingSystem.get("name", None),
-        major=operatingSystem.get("major", None),
-        minor=operatingSystem.get("minor", None),
-        patch=operatingSystem.get("patch", None),
-        build=operatingSystem.get("build", None),
-    )
-    return node_to_dict(result.single()["n"])
+        "CREATE (n:OperatingSystem { id: randomUUID() }) SET n += $params RETURN n",
+        params=params,
+    ).single()
+    if result:
+        return { "operatingSystem": result.value() }
+    else:
+        return { "error": "unable to create." }
+
+@mutation.field('updateOperatingSystem')
+def resolve_update_operating_system(context, info, params):
+    result = g.session.run(
+        "MATCH (n:OperatingSystem { id: $params.id }) SET n += $params RETURN n",
+        params=params,
+    ).single()
+    if result:
+        return { "operatingSystem": result.value() }
+    else:
+        return { "error": "not found." }

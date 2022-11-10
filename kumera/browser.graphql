@@ -1,6 +1,5 @@
-type Browser implements Node {
+type Browser {
     id: String!
-    label: String!
     name: String!
     version: String!
     major: Int!
@@ -21,4 +20,7 @@ input UpdateBrowser {
     patch: Int
 }
 
-union BrowserResult = Browser | Error
+type BrowserResult {
+    browser: Browser
+    error: String
+}

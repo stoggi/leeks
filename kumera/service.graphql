@@ -1,6 +1,5 @@
-type Service implements Node {
+type Service {
     id: String!
-    label: String!
     name: String!
     website: String
     phone: String
@@ -23,4 +22,7 @@ input UpdateService {
     hours: String
 }
 
-union ServiceResult = Service | Error
+type ServiceResult {
+    service: Service
+    error: String
+}
