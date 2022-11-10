@@ -7,8 +7,7 @@ name = "pypi"
 flask = "*"
 gunicorn = "*"
 ariadne = "*"
-cogdb = "*"
-psycopg2-binary = "*"
+typing-extensions = "*"
 
 [dev-packages]
 
