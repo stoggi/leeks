@@ -1,14 +1,9 @@
-import os
-import json
-from ariadne import graphql_sync, gql, make_executable_schema, load_schema_from_path
-from ariadne import InterfaceType, ObjectType, QueryType, MutationType
+from ariadne import graphql_sync, make_executable_schema
 from ariadne.constants import PLAYGROUND_HTML
 from flask import Flask, request, jsonify, render_template, flash, url_for, g
 from authlib.integrations.flask_client import OAuth
 
-from kumera import resolvers, type_defs
-from kumera.utils import node_to_dict, edge_to_dict
-
+from leeks import resolvers, type_defs
 from neo4j import GraphDatabase
 
 schema = make_executable_schema(type_defs, *resolvers)
@@ -17,7 +12,7 @@ app = Flask(__name__, static_folder='public', static_url_path='')
 app.config.from_mapping(
     SECRET_KEY="dev",
 )
-app.config.from_file("./config.json", load=json.load)
+app.config.from_prefixed_env("FLASK")
 
 oauth = OAuth(app)
 github = oauth.register(
@@ -101,7 +96,7 @@ def view():
 
     return render_template('graph.html', data=result.get("data",{}))
 
-driver = GraphDatabase.driver("neo4j://localhost:7687", auth=("neo4j", "password"))
+driver = GraphDatabase.driver("neo4j://neo4j:7687", auth=("neo4j", "password"))
 
 @app.before_request
 def connect_mgclient():

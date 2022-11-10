@@ -1,9 +1,9 @@
 
 
 type Node {
-    id: String!
-    label: String!
-    name: String!
+    id: String
+    label: String
+    name: String
 }
 
 type Edge {
