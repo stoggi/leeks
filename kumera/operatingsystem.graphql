@@ -1,0 +1,27 @@
+type OperatingSystem implements Node {
+    id: String!
+    label: String!
+    name: String!
+    version: String!
+    major: Int!
+    minor: Int!
+    patch: Int
+    build: String
+}
+input CreateOperatingSystem {
+    name: String!
+    major: Int!
+    minor: Int!
+    patch: Int
+    build: String
+}
+input UpdateOperatingSystem {
+    id: String!
+    name: String
+    major: Int
+    minor: Int
+    patch: Int
+    build: String
+}
+
+union OperatingSystemResult = OperatingSystem | Error

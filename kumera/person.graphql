@@ -1,0 +1,30 @@
+
+enum Role {
+    ADMINISTRATOR
+    DEVELOPER
+    USER
+}
+
+type Person implements Node {
+    id: String!
+    label: String!
+    name: String!
+    email: String!
+    phone: String
+    roles: [Role]
+}
+input CreatePerson {
+    name: String!
+    email: String!
+    phone: String
+    roles: [Role]
+}
+input UpdatePerson {
+    id: String!
+    name: String
+    email: String
+    phone: String
+    roles: [Role]
+}
+
+union PersonResult = Person | Error

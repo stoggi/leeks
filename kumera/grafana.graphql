@@ -1,0 +1,17 @@
+type GrafanaNodeView {
+    nodes: [GrafanaNode]
+    edges: [GrafanaEdge]
+}
+
+type GrafanaNode {
+    id: String!
+    title: String
+    subtitle: String
+}
+
+type GrafanaEdge {
+    id: String!
+    source: String!
+    target: String!
+    mainstat: String
+}

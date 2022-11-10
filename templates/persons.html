@@ -6,9 +6,9 @@
 
 {% block content %}
 
-{% if data.persons is defined %}
+{% if data.person is defined %}
 <ul>
-    {% for person in data.persons %}
+    {% for person in data.person %}
     <li>{{ person.name }}</li>
     {% endfor %}
 </ul>
